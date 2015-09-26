@@ -1,0 +1,1 @@
+use buildpack "https://github.com/thenovices/heroku-buildpack-scipy" for heroku

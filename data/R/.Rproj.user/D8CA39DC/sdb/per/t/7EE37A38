@@ -1,0 +1,17 @@
+{
+    "contents" : "library(boot)\n\n# load data\nd <- read.csv(\"../nhl_2014-2015.csv\")\n\nsmp_size <- floor(0.75 * nrow(d))\nset.seed(42)\n\ntrain_ind <- sample(seq_len(nrow(d)), size = smp_size)\n\nd.train <- data.frame(d[train_ind, ])\nd.test <- data.frame(d[-train_ind, ])\n\n# train linear model\nglm.fit <- glm(y~., data = d.train)\n\n# calculate mean error\n\n# paste(predict(glm.fit, d.test, type=\"response\")[1])\n\n# paste(\"mean error =\", sqrt(mean((d.test[\"target\"] - predict(glm.fit, d.test, type=\"response\"))^2))\n\n# use 10-fold\n#cv.err <- cv.glm(d.train, glm.fit, K=10)\n#paste(\"cv.err$delta:\", cv.err$delta)\n\np <- predict(glm.fit, d.test, type=\"response\")\nn_score <- 0\ntest_count <- length(p)\nfor (i in 1:test_count) {\n  if(d.test[i,\"y\"] == round(p[i]))\n    n_score <- n_score + 1\n}\nprint((n_score/test_count)*100)\n",
+    "created" : 1435084467620.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2375825708",
+    "id" : "7EE37A38",
+    "lastKnownWriteTime" : 1438116225,
+    "path" : "~/prj/NHLPredictor/data/R/glm1.R",
+    "project_path" : "glm1.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "source_on_save" : false,
+    "type" : "r_source"
+}

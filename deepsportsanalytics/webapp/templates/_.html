@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>{% block title %}{% endblock %} - NHL Predictor</title>
+
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/lib/foundation.min.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/lib/foundation-datepicker.min.css') }}">
+        <!-- third-party libs -->
+        <script src="{{ url_for('static', filename='js/lib/jquery-1.11.3.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/lib/underscore-min.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/lib/backbone-min.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/lib/foundation.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/lib/foundation-datepicker.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/lib/moment-with-locales.min.js') }}"></script>
+        <!-- application scripts -->
+        <script src="{{ url_for('static', filename='js/prediction.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/predictionList.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+        {% block head %}{% endblock %}
+    </head>
+    <body>
+      <nav class="top-bar" data-topbar>
+       <ul class="title-area">
+         <li class="name">
+           <h1>
+             <a href="#">
+               Sports Analytics
+             </a>
+           </h1>
+         </li>
+         <li class="toggle-topbar menu-icon"><a href="#"><span>Menu</span></a></li>
+       </ul>
+      </nav>
+
+      <div id="content">{% block content %}{% endblock %}</div>
+
+      <footer class="row">
+       <div class="large-12 columns">
+         <hr/>
+         <div class="row">
+           <div class="large-6 columns">
+             <p>© Copyright no one at all. Go to town.</p>
+           </div>
+         </div>
+       </div>
+      </footer>
+    </body>
+</html>

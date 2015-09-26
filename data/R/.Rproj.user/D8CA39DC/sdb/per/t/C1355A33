@@ -1,0 +1,17 @@
+{
+    "contents" : "library(boot)\nlibrary(RWeka)\nlibrary(rpart)\nlibrary(ipred)\n\n# load data\nd <- read.csv(\"../nhl_2014-2015.csv\")\nd[,\"y\"] <- as.factor(d[,\"y\"])\n\nsmp_size <- floor(0.75 * nrow(d))\nset.seed(42)\n\ntrain_ind <- sample(seq_len(nrow(d)), size = smp_size)\n\nd.train <- data.frame(d[train_ind, ])\n\nd.test <- data.frame(d[-train_ind, ])\n\n#model <- J48(y~., data=d.train) #54\nmodel <- PART(y~., data=d.train)\n\nresults <- predict(model, d.test)\n\ntable(results, d.test$y)\n\nn_score <- 0\ntest_count <- length(results)\nfor (i in 1:test_count) {\n  if(d.test[i,\"y\"] == results[i])\n    n_score <- n_score + 1\n}\nprint((n_score/test_count)*100)",
+    "created" : 1438718402201.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "715063094",
+    "id" : "C1355A33",
+    "lastKnownWriteTime" : 1438712793,
+    "path" : "~/prj/NHLPredictor/data/R/dt_factor.R",
+    "project_path" : "dt_factor.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "source_on_save" : false,
+    "type" : "r_source"
+}

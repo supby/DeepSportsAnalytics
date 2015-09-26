@@ -1,0 +1,29 @@
+<script type="text/template" id="predictions-template">
+  <table class="predictions-table">
+    <thead>
+      <tr>
+        <th>
+          <button class="predict-game-datepicker button small"
+                  data-date-format="yyyy-mm-dd">Game Date</button>
+        </th>
+        <th>Team 1 Name</th>
+        <th>Team 2 Name</th>
+        <th>Win Probability</th>
+      </tr>
+    </thead>
+    <tbody id="predictions-table">
+      <tr class="pred-tbl-no-data-row" style="display:none">
+        <td colspan="4">
+          No Data.
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</script>
+
+<script type="text/template" id="prediction-template">
+    <td><%= gameDate %></td>
+    <td><%= team1Name %></td>
+    <td><%= team2Name %></td>
+    <td><%= winProba %></td>
+</script>

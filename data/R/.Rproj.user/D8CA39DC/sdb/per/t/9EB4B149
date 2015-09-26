@@ -1,0 +1,17 @@
+{
+    "contents" : "require(graphics)\n\nd <- read.csv(\"../nhl_2014-2015.csv\")\n\npc.cr <- princomp(~.,data=d)\n\nsummary(pc.cr)\nloadings(pc.cr)\nplot(pc.cr)\nbiplot(pc.cr)\n",
+    "created" : 1435084578554.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3352622162",
+    "id" : "9EB4B149",
+    "lastKnownWriteTime" : 1438112923,
+    "path" : "~/prj/NHLPredictor/data/R/pca1.R",
+    "project_path" : "pca1.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "source_on_save" : false,
+    "type" : "r_source"
+}

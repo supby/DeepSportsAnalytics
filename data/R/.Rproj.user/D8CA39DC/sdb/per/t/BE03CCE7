@@ -1,0 +1,17 @@
+{
+    "contents" : "library(boot)\nlibrary(e1071)\n#library(printr)\n\n# load data\nd <- read.csv(\"../nhl_2014-2015.csv\")\nd <- d[,!(names(d) %in% c(\"x1\"))]\n#d[,\"y\"] <- as.factor(d[,\"y\"])\n\nsmp_size <- floor(0.75 * nrow(d))\nset.seed(42)\n\ntrain_ind <- sample(seq_len(nrow(d)), size = smp_size)\n\nd.train <- data.frame(d[train_ind, ])\nd.test <- data.frame(d[-train_ind, ])\n#d.test <- !is.na(d.test)\n\n# train linear model\nmodel <- svm(y ~ ., data = d.train)\nresults <- predict(object = model, newdata = d.test, type = \"class\")\n\ntable(results, d.test$y)\n\nn_score <- 0\ntest_count <- length(results)\nfor (i in 1:test_count) {\n  #if(d.test[i,\"y\"] == results[i])  \n  if(d.test[i,\"y\"] == round(results[i]))\n    n_score <- n_score + 1\n}\nprint((n_score/test_count)*100)\n",
+    "created" : 1435085566391.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "330392877",
+    "id" : "BE03CCE7",
+    "lastKnownWriteTime" : 1439658429,
+    "path" : "~/prj/NHLPredictor/data/R/svm1.R",
+    "project_path" : "svm1.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "source_on_save" : false,
+    "type" : "r_source"
+}

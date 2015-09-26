@@ -1,0 +1,17 @@
+{
+    "contents" : "library(boot)\nlibrary(gbm)\n\n# load data\nd <- read.csv(\"../nhl_2014-2015.csv\")\nd <- d[,!(names(d) %in% c(\"x1\"))]\n\nsmp_size <- floor(0.75 * nrow(d))\nset.seed(42)\n\ntrain_ind <- sample(seq_len(nrow(d)), size = smp_size)\n\nd.train <- data.frame(d[train_ind, ])\n\nd.test <- data.frame(d[-train_ind, ])\n\nmodel <- gbm(y~., data=d.train, n.trees=100)\n\nresults <- predict(model, d.test, n.trees=100, type=\"response\")\n\ntable(results, d.test$y)\n\nn_score <- 0\ntest_count <- length(results)\nfor (i in 1:test_count) {\n  if(d.test[i,\"y\"] == round(results[i]))\n    n_score <- n_score + 1\n}\nprint((n_score/test_count)*100)",
+    "created" : 1438713079824.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1882906876",
+    "id" : "D278685D",
+    "lastKnownWriteTime" : 1438718347,
+    "path" : "~/prj/NHLPredictor/data/R/gbm.R",
+    "project_path" : "gbm.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "source_on_save" : false,
+    "type" : "r_source"
+}

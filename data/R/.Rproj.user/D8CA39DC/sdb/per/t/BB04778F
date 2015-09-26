@@ -1,0 +1,17 @@
+{
+    "contents" : "library(boot)\nlibrary(neuralnet)\n\n# load data\nd <- read.csv(\"../nhl_2014-2015.csv\")\n\nsmp_size <- floor(0.75 * nrow(d))\nset.seed(42)\n\ntrain_ind <- sample(seq_len(nrow(d)), size = smp_size)\nd.train <- data.frame(d[train_ind, ])\nd.test <- data.frame(d[-train_ind, ])\n\nmodel <- neuralnet(y~x0+x1+x2+x3+x4+x5+x6+x7+x8+x9+x10+x11+x12+x13+x14+x15+x16+x17+x18+x19+x20+x21+x22+x23+x24, d.train, hidden=10)\n#plot(model)\nresults <- compute(model, subset(d.test, select = c(\"x0\",\"x1\",\"x2\",\"x3\",\"x4\",\"x5\",\"x6\",\"x7\",\"x8\",\"x9\",\"x10\",\"x11\",\"x12\",\"x13\",\"x14\",\"x15\",\"x16\",\"x17\",\"x18\",\"x19\",\"x20\",\"x21\",\"x22\",\"x23\",\"x24\")))\n\nn_score <- 0\ntest_count <- length(results$net.result)\nfor (i in 1:test_count) {\n  if(d.test[i,\"y\"] == round(results$net.result[i]))\n    n_score <- n_score + 1\n}\nprint((n_score/test_count)*100)\n\n\n\n",
+    "created" : 1439658657286.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "382940164",
+    "id" : "BB04778F",
+    "lastKnownWriteTime" : 1440010895,
+    "path" : "~/prj/NHLPredictor/data/R/neuralnet.R",
+    "project_path" : "neuralnet.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "source_on_save" : false,
+    "type" : "r_source"
+}

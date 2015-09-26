@@ -1,0 +1,17 @@
+{
+    "contents" : "library(boot)\nlibrary(nnet)\n\n# load data\nd <- read.csv(\"../nhl_2014-2015.csv\")\n\nsmp_size <- floor(0.75 * nrow(d))\nset.seed(42)\n\ntrain_ind <- sample(seq_len(nrow(d)), size = smp_size)\n\nd.train <- data.frame(d[train_ind, ])\n\nd.test <- data.frame(d[-train_ind, ])\n#d.test <- !is.na(d.test)\n\nmodel <- nnet(y~., data=d.train, size=35, decay=0.0001, maxit=2000, MaxNWts=10000)\nresults <- predict(model, d.test)\n\ntable(results, d.test$y)\n\nn_score <- 0\ntest_count <- length(results)\nfor (i in 1:test_count) {\n  if(d.test[i,\"y\"] == round(results[i]))\n    n_score <- n_score + 1\n}\nprint((n_score/test_count)*100)",
+    "created" : 1438114686271.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "938213776",
+    "id" : "2AB2426F",
+    "lastKnownWriteTime" : 1438629616,
+    "path" : "~/prj/NHLPredictor/data/R/nn.R",
+    "project_path" : "nn.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "source_on_save" : false,
+    "type" : "r_source"
+}

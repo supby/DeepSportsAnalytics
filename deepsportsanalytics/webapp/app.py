@@ -32,7 +32,7 @@ l.setLevel(logging.INFO)
 l.addHandler(h)
 
 app = Flask(__name__)
-app.config.from_object('nhlpredictor.webapp.config.DevelopmentConfig')
+app.config.from_object('deepsportsanalytics.webapp.config.DevelopmentConfig')
 app.logger.addHandler(h)
 
 app.register_blueprint(webapi)

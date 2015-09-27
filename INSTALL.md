@@ -8,4 +8,4 @@ git clone https://github.com/supby/DeepSportsAnalytics.git
 cd DeepSportsAnalytics
 virtualenv .
 source bin/activate
-pip instal -r requirements.txt
+pip install -r requirements.txt

@@ -41,7 +41,7 @@ def predict(modelname, datefrom, dateto):
                         data_storage=AzureBlobStorage(
                                                 global_config.COMMON['azure_storage_name'],
                                                 global_config.COMMON['azure_storage_key'],
-                                                'data'),
+                                                '%s-data' % modelname),
                         data_source=NHLRefDataSource(dict(sub_data_url=global_config.MINER['sub_data_url'],
                                                           base_url=global_config.MINER['base_url']),
                                                      cache=DefaultCache.get_instance(),
@@ -49,7 +49,7 @@ def predict(modelname, datefrom, dateto):
                     .predict(date_from, date_to)
 
         if not data_to_predict:
-            return jsonify(data=None)            
+            return jsonify(data=None)
 
         return jsonify(data=[{'gameDate': str(pd[1][0]),
                    'team1Name': pd[1][1],

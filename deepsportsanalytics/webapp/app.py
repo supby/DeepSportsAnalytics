@@ -7,6 +7,8 @@ __date__ = "$Jun 8, 2015 9:49:09 PM$"
 
 import os
 import sys
+import logging
+import logging.config
 sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 
 from werkzeug import secure_filename
@@ -21,19 +23,29 @@ from api.admin import webapi_admin
 from db import init_db
 from db import db_session
 
-import logging
-logger = logging.getLogger(__name__)
+root_logger = logging.getLogger()
+root_logger.setLevel(logging.INFO)
 
-h = logging.StreamHandler()
-h.setLevel(logging.INFO)
+fh = logging.FileHandler('/tmp/deepsportsanalytics.log')
+fh.setLevel(logging.INFO)
 
-l = logging.getLogger()
-l.setLevel(logging.INFO)
-l.addHandler(h)
+ch = logging.StreamHandler()
+ch.setLevel(logging.INFO)
+
+formatter = logging.Formatter('[%(asctime)s] [%(process)d:%(thread)d] \
+                                [%(levelname)s] [%(module)s] [%(funcName)s] \
+                                %(message)s')
+ch.setFormatter(formatter)
+fh.setFormatter(formatter)
+
+root_logger.addHandler(ch)
+root_logger.addHandler(fh)
 
 app = Flask(__name__)
 app.config.from_object('deepsportsanalytics.webapp.config.DevelopmentConfig')
-app.logger.addHandler(h)
+
+app.logger.addHandler(ch)
+app.logger.addHandler(fh)
 
 app.register_blueprint(webapi)
 app.register_blueprint(webapi_admin)

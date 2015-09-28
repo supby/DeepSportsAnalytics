@@ -112,7 +112,7 @@ class NHLRefDataSource(DataSourceBase):
             team1A = tr_obj('td:eq(1) a')[0]
             team2A = tr_obj('td:eq(3) a')[0]
 
-            print '%s - %s' % (team1A.text, team2A.text)
+            logger.info('%s - %s' % (team1A.text, team2A.text))
 
             if proccess_if_no_scores:
                 metadata.append((game_date, team1A.text, team2A.text))

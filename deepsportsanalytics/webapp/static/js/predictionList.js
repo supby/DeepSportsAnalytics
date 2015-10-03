@@ -6,20 +6,23 @@ var PredictionListModel = Backbone.Model.extend({
           predictDateTo: null,
           predictionsUrl: 'api/v1.0/predict/model'
         };
+    },
+    loadPredictions: function(){
+      Predictions.url = this.attributes['predictionsUrl']
+                + '/' + this.attributes['predictDateFrom'].format("YYYY-MM-DD")
+                + '/' + this.attributes['predictDateTo'].format("YYYY-MM-DD");
+      Predictions.fetch();
     }
 });
 
 var PredictionListView = Backbone.View.extend({
-
     initialize: function () {
       this.listenTo(Predictions, 'sync', this.addAll);
-      this.loadPredictions();
     },
     loadPredictions: function() {
-      Predictions.url = this.model.get('predictionsUrl')
-                + '/' + this.model.get('predictDateFrom').format("YYYY-MM-DD")
-                + '/' + this.model.get('predictDateTo').format("YYYY-MM-DD");
-      Predictions.fetch();
+      this.setNoData(false);
+      this.setLoading(true);
+      this.model.loadPredictions();
     },
     addOne: function (prediction) {
       if (!prediction.isNull())
@@ -35,12 +38,19 @@ var PredictionListView = Backbone.View.extend({
         this.setNoData(false);
         Predictions.each(this.addOne, this);
       }
+      this.setLoading(false);
     },
     setNoData: function(set) {
       if(set)
         this.$('.pred-tbl-no-data-row').show();
       else
         this.$('.pred-tbl-no-data-row').hide();
+    },
+    setLoading: function(set) {
+      if(set)
+        this.$('.pred-tbl-loading-row').show();
+      else
+        this.$('.pred-tbl-loading-row').hide();
     },
     render: function () {
       this.$el.html(_.template($('#predictions-template').text())(this.model.toJSON()));
@@ -49,6 +59,7 @@ var PredictionListView = Backbone.View.extend({
           .fdatepicker()
           .fdatepicker('update', this.model.get('predictDateFrom').format("YYYY-MM-DD"))
           .on('changeDate', $.proxy(this.gameDateChanged, this));
+      this.loadPredictions();
       return this;
     },
     gameDateChanged: function (ev) {

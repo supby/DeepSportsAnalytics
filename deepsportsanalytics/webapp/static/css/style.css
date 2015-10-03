@@ -16,4 +16,6 @@ and open the template in the editor.
 .loading
 {
   background-image: url('../img/loading_2424_1.gif');
+  height: 24px;
+  width: 24px;
 }

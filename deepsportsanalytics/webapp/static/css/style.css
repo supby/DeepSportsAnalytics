@@ -12,3 +12,8 @@ and open the template in the editor.
 {
   width: 100%;
 }
+
+.loading
+{
+  background-image: url('../img/loading_2424_1.gif');
+}

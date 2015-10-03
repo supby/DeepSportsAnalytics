@@ -1,12 +1,18 @@
 var PredictionModel = Backbone.Model.extend({
     defaults: function () {
         return {
-          gameDate: '',
-          team1Name: '',
-          team2Name: '',
-          winProba: 0
+          gameDate: null,
+          team1Name: null,
+          team2Name: null,
+          winProba: null
         };
     },
+    isNull: function() {
+      return this.attributes['gameDate'] == null
+            && this.attributes['team1Name'] == null
+            && this.attributes['team2Name'] == null
+            && this.attributes['winProba'] == null;
+    }
 });
 
 var PredictionList = Backbone.Collection.extend({

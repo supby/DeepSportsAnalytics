@@ -22,16 +22,25 @@ var PredictionListView = Backbone.View.extend({
       Predictions.fetch();
     },
     addOne: function (prediction) {
-      $('#predictions-table')
-        .append(new PredictionView({ model: prediction }).render().el);
+      if (!prediction.isNull())
+        $('#predictions-table')
+          .append(new PredictionView({ model: prediction }).render().el);
+      else
+        this.setNoData(true);
     },
     addAll: function () {
       if(Predictions.length == 0)
-        this.$('.pred-tbl-no-data-row').show();
+        this.setNoData(true);
       else {
-        this.$('.pred-tbl-no-data-row').hide();
+        this.setNoData(false);
         Predictions.each(this.addOne, this);
       }
+    },
+    setNoData: function(set) {
+      if(set)
+        this.$('.pred-tbl-no-data-row').show();
+      else
+        this.$('.pred-tbl-no-data-row').hide();
     },
     render: function () {
       this.$el.html(_.template($('#predictions-template').text())(this.model.toJSON()));

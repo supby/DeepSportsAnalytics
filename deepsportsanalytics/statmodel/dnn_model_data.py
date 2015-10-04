@@ -1,6 +1,5 @@
-
-
 import itertools
+
 import numpy as np
 from pylearn2.datasets.dense_design_matrix import DenseDesignMatrix
 from sklearn import cross_validation
@@ -20,6 +19,7 @@ class DNNDATA(DenseDesignMatrix):
 
         X = X[start:stop]
         Y = Y[start:stop]
+
         if scaler:
             X = scaler.fit_transform(X)
 
@@ -40,8 +40,8 @@ class DNNDATA(DenseDesignMatrix):
 
     def split(self, prop=.8):
         X1, X2, y1, y2 = self._split(self.X, self.y, prop)
-        return DNNDATA(X1, y1, batch_size=self._batch_size), \
-                DNNDATA(X2, y2, batch_size=self._batch_size)
+        return DNNDATA(X1, y1, batch_size=self._batch_size),\
+               DNNDATA(X2, y2, batch_size=self._batch_size)
 
     def __len__(self):
         return self.X.shape[0]

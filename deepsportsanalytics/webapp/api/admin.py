@@ -17,6 +17,7 @@ from flask import jsonify
 from werkzeug.exceptions import BadRequest
 from werkzeug.exceptions import InternalServerError
 from flask import Response
+from sqlalchemy import asc, desc
 
 import global_config
 from data.storage.azure_storage import AzureBlobStorage
@@ -28,6 +29,7 @@ from utils import date_utils
 from utils.thread_utils import AsyncMethod
 from db import db_session
 from db.models import UpdateStatModel
+from db import get_db_session_scope
 from extensions.sqlalchemy_ext import AlchemyEncoder
 from extensions.sqlalchemy_ext import aljesonify
 
@@ -36,7 +38,7 @@ logger = logging.getLogger(__name__)
 webapi_admin = Blueprint('webapi_admin', __name__)
 
 @AsyncMethod
-def __update_async(model_name, date_from, date_to, reset_data, done_callback):
+def __update_async(model_name, date_from, date_to, reset_data, model_status_id):
     AzureModelService(
                 model_storage=AzureBlobStorage(
                                         global_config.COMMON['azure_storage_name'],
@@ -51,7 +53,13 @@ def __update_async(model_name, date_from, date_to, reset_data, done_callback):
                                              cache=DefaultCache.get_instance(),
                                              fvector_len=global_config.MODEL['fvector_length']))\
         .update(date_from=date_from, date_to=date_to, reset_data=reset_data)
-    done_callback()
+
+    with get_db_session_scope() as s:
+        UpdateStatModel.query\
+                        .filter(UpdateStatModel.name == model_name,\
+                                UpdateStatModel.id == model_status_id)\
+                        .update({'status': 2})
+        s.commit()
 
 @webapi_admin.route('/api/v1.0/updatemodel/<modelname>/<datefrom>/<dateto>/<resetdata>', methods=['GET'])
 def update_model(modelname, datefrom, dateto, resetdata):
@@ -66,17 +74,12 @@ def update_model(modelname, datefrom, dateto, resetdata):
         raise BadRequest
 
     try:
-        def done_updating():
-            UpdateStatModel.query\
-                            .filter(UpdateStatModel.name == modelname)\
-                            .update({'status': 2})
-            db_session.commit()
+        model_status = UpdateStatModel(modelname, 1)
+        db_session.add(model_status)
+        db_session.commit()
 
         __update_async(modelname, date_from, date_to,
-                        resetdata=='true', done_updating)
-
-        db_session.add(UpdateStatModel(modelname, 1))
-        db_session.commit()
+                       resetdata=='true', model_status.id)
 
         return 'Updating started.'
     except:
@@ -88,4 +91,5 @@ def get_updating_status(modelname):
     return aljesonify(UpdateStatModel\
                         .query\
                         .filter(UpdateStatModel.name == modelname)\
+                        .order_by(desc(UpdateStatModel.id))\
                         .first())

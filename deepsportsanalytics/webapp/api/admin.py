@@ -48,8 +48,8 @@ def __update_async(model_name, date_from, date_to, reset_data, model_status_id):
                                         global_config.COMMON['azure_storage_name'],
                                         global_config.COMMON['azure_storage_key'],
                                         'data'),
-                data_source=NHLRefDataSource(dict(sub_data_url=global_config.MINER['sub_data_url'],
-                                                  base_url=global_config.MINER['base_url']),
+                data_source=NHLRefDataSource(team_stat_season=2015,
+                                             games_season=2016,
                                              cache=DefaultCache.get_instance(),
                                              fvector_len=global_config.MODEL['fvector_length']))\
         .update(date_from=date_from, date_to=date_to, reset_data=reset_data)

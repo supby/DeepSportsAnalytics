@@ -27,8 +27,10 @@ var Predictions = new PredictionList;
 
 var PredictionView = Backbone.View.extend({
     tagName: 'tr',
+    attributes: {},
 
     render: function () {
+      this.attributes['prediction'] = this.model.get('winProba');
       this.$el.html(_.template($('#prediction-template').text())(this.model.toJSON()));
       return this;
     }

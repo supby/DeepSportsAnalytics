@@ -6,6 +6,7 @@ import sys
 import datetime
 from dateutil.parser import parse
 import logging
+from urlparse import urlparse
 
 from pyquery import PyQuery as pq
 
@@ -19,16 +20,24 @@ class NHLRefDataSource(DataSourceBase):
     inplement data source for nhl-reference site
     """
 
-    def __init__(self, config, cache=None,
+    __GAMES_URL_FORMAT = '/leagues/NHL_{0}_games.html'
+    __TEAM_STAT_URL_FORMAT = '/teams/{0}/{1}.html'
+    __BASE_URL = 'http://www.hockey-reference.com'
+
+    def __init__(self, team_stat_season, games_season, cache=None,
                  fvector_len=None, cache_team_stats=False):
         if cache:
             assert isinstance(cache, CacheBase), \
                 "cache must have CacheBase class as base one"
 
-        self.__config = config
         self.__cache = cache
         self.__fvector_len = fvector_len
         self.__cache_team_stats = cache_team_stats
+
+        self.__team_stat_season = team_stat_season
+        self.__games_season = games_season
+
+        self.__games_url = self.__GAMES_URL_FORMAT.format(games_season)
 
         if self.__cache_team_stats:
             self.__team_stat_cache = {}
@@ -45,9 +54,9 @@ class NHLRefDataSource(DataSourceBase):
                                    'table#games_playoffs tbody tr']:
                 logger.info("Process table: %s" % table_selector)
 
-                d = self.__extract_data(table_rows=pq(url=self.__config['base_url']
-                                            + self.__config['sub_data_url'])(table_selector),
-                                            base_url=self.__config['base_url'],
+                d = self.__extract_data(table_rows=pq(url=self.__BASE_URL
+                                            + self.__games_url)(table_selector),
+                                            base_url=self.__BASE_URL,
                                             date_from=filter.dateFrom,
                                             date_to=filter.dateTo,
                                             limit=filter.limit,
@@ -61,8 +70,10 @@ class NHLRefDataSource(DataSourceBase):
         return data
 
     def __extract_stats(self, stats_url):
-        stats = []
 
+        logger.info('stat url: %s' % (stats_url))
+
+        stats = []
         if self.__cache_team_stats:
             stats = self.__team_stat_cache.get(stats_url, [])
 
@@ -82,9 +93,20 @@ class NHLRefDataSource(DataSourceBase):
     def __get_diff(self, stats1, stats2):
         return [float(stats1[i] - stats2[i]) for i in range(len(stats1))]
 
+    def __get_team_code(self, path):
+        return path.strip('/').split('/')[1]
+
     def __proccess_team_stats(self, train_samples, team1Link, team2Link):
-        team1Stats = self.__extract_stats(team1Link)
-        team2Stats = self.__extract_stats(team2Link)
+        team1url = self.__TEAM_STAT_URL_FORMAT\
+                        .format(self.__get_team_code(urlparse(team1Link).path),
+                                self.__team_stat_season)
+        team2url = self.__TEAM_STAT_URL_FORMAT\
+                        .format(self.__get_team_code(urlparse(team2Link).path),
+                        self.__team_stat_season)
+
+        team1Stats = self.__extract_stats(self.__BASE_URL + team1url)
+        team2Stats = self.__extract_stats(self.__BASE_URL + team2url)
+
         if team1Stats and team2Stats:
             train_samples.append(self.__get_diff(team1Stats, team2Stats))
 

@@ -20,6 +20,7 @@ var PredictionListView = Backbone.View.extend({
       this.listenTo(Predictions, 'sync', this.addAll);
     },
     loadPredictions: function() {
+      this.resetList();
       this.setNoData(false);
       this.setLoading(true);
       this.model.loadPredictions();
@@ -71,5 +72,8 @@ var PredictionListView = Backbone.View.extend({
 
       dp.text(dateString).fdatepicker('hide');
       this.loadPredictions();
+    },
+    resetList: function() {
+      this.$('tr[prediction]').remove();
     }
 });

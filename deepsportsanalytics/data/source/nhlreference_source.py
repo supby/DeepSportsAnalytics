@@ -88,6 +88,9 @@ class NHLRefDataSource(DataSourceBase):
                 stats.append(val)
             if self.__cache_team_stats:
                 self.__team_stat_cache[stats_url] = stats
+        else:
+            logger.info('found in cache, url: %s' % (stats_url))
+
         return stats
 
     def __get_diff(self, stats1, stats2):

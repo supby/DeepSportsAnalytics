@@ -79,6 +79,8 @@ class AzureModelService(ModelServiceBase):
         current_dataset = ([], [])
         if not reset_data:
             current_dataset = self.__data_storage.get('traindata', ([], []))
+        else:
+            logger.info('reset current train data.')
 
         updated_dataset = (current_dataset[0] + new_data_set[0],
                            current_dataset[1] + new_data_set[1])

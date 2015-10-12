@@ -1,5 +1,6 @@
 <script type="text/template" id="predictions-template">
-  <table class="predictions-table">
+  <table>
+    <caption>NHL 2015 - 2016 Predictions</caption>
     <thead>
       <tr>
         <th>
@@ -11,7 +12,7 @@
         <th>Win Probability</th>
       </tr>
     </thead>
-    <tbody id="predictions-table">
+    <tbody class="predictions-table-tbody">
       <tr class="pred-tbl-no-data-row" style="display:none">
         <td colspan="4">
           No Data.
@@ -30,5 +31,5 @@
     <td><%= gameDate %></td>
     <td><%= team1Name %></td>
     <td><%= team2Name %></td>
-    <td><%= winProba %></td>
+    <td><%= winProba.toFixed(2) %></td>
 </script>

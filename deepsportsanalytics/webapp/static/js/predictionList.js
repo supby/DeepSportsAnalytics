@@ -27,7 +27,7 @@ var PredictionListView = Backbone.View.extend({
     },
     addOne: function (prediction) {
       if (!prediction.isNull())
-        $('#predictions-table')
+        $('.predictions-table-tbody')
           .append(new PredictionView({ model: prediction }).render().el);
       else
         this.setNoData(true);

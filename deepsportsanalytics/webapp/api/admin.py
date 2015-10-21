@@ -6,11 +6,11 @@ __author__ = "andrej"
 __date__ = "$Jun 10, 2015 10:55:52 PM$"
 
 import sys
-import datetime
 from dateutil import parser
 import logging
 import threading
 import json
+from datetime import datetime
 
 from flask import Blueprint
 from flask import jsonify
@@ -58,7 +58,7 @@ def __update_async(model_name, date_from, date_to, reset_data, model_status_id):
         UpdateStatModel.query\
                         .filter(UpdateStatModel.name == model_name,\
                                 UpdateStatModel.id == model_status_id)\
-                        .update({'status': 2})
+                        .update({'status': 2, 'end_date': datetime.utcnow() })
         s.commit()
 
 @webapi_admin.route('/api/v1.0/updatemodel/<modelname>/<datefrom>/<dateto>/<resetdata>', methods=['GET'])
@@ -93,3 +93,13 @@ def get_updating_status(modelname):
                         .filter(UpdateStatModel.name == modelname)\
                         .order_by(desc(UpdateStatModel.id))\
                         .first())
+
+@webapi_admin.route('/api/v1.0/updatemodel/lastupdate/<modelname>', methods=['GET'])
+def get_last_update(modelname):
+    state = UpdateStatModel\
+                        .query\
+                        .filter(UpdateStatModel.name == modelname,
+                                UpdateStatModel.status == 2)\
+                        .order_by(desc(UpdateStatModel.id))\
+                        .first()
+    return jsonify({ 'lastUpdate': state.start_date, 'name': state.name })

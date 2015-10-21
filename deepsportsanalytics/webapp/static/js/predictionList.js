@@ -12,7 +12,8 @@ var PredictionListModel = Backbone.Model.extend({
                 + '/' + this.attributes['predictDateFrom'].format("YYYY-MM-DD")
                 + '/' + this.attributes['predictDateTo'].format("YYYY-MM-DD");
       Predictions.fetch();
-    }
+    },
+
 });
 
 var PredictionListView = Backbone.View.extend({
@@ -55,6 +56,10 @@ var PredictionListView = Backbone.View.extend({
     },
     render: function () {
       this.$el.html(_.template($('#predictions-template').text())(this.model.toJSON()));
+      this.$el.append(
+        new StatModelStateView({
+          model: new StatModelStateModel({ id: 'model' })
+        }).render().el)
       this.$('.predict-game-datepicker')
           .text(this.model.get('predictDateFrom').format("YYYY-MM-DD"))
           .fdatepicker()

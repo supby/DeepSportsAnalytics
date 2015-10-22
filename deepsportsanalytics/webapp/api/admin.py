@@ -49,7 +49,7 @@ def __update_async(model_name, date_from, date_to, reset_data, model_status_id):
                                         global_config.COMMON['azure_storage_key'],
                                         '%s-data' % model_name),
                 data_source=NHLRefDataSource(team_stat_season=2015,
-                                             games_season=2015,
+                                             games_season=2016,
                                              cache=DefaultCache.get_instance(),
                                              fvector_len=global_config.MODEL['fvector_length']))\
         .update(date_from=date_from, date_to=date_to, reset_data=reset_data)
@@ -88,11 +88,18 @@ def update_model(modelname, datefrom, dateto, resetdata):
 
 @webapi_admin.route('/api/v1.0/updatemodel/status/<modelname>', methods=['GET'])
 def get_updating_status(modelname):
-    return aljesonify(UpdateStatModel\
+    state = UpdateStatModel\
                         .query\
                         .filter(UpdateStatModel.name == modelname)\
                         .order_by(desc(UpdateStatModel.id))\
-                        .first())
+                        .first()
+    jsonify({ 'id': state.id,
+              'name': state.name,
+              'status': state.status,
+              'start_date': state.start_date,
+              'end_date': state.end_date,
+              'state': state.state })
+
 
 @webapi_admin.route('/api/v1.0/updatemodel/lastupdate/<modelname>', methods=['GET'])
 def get_last_update(modelname):
@@ -102,4 +109,5 @@ def get_last_update(modelname):
                                 UpdateStatModel.status == 2)\
                         .order_by(desc(UpdateStatModel.id))\
                         .first()
-    return jsonify({ 'lastUpdate': state.start_date, 'name': state.name })
+    return jsonify({ 'lastUpdate': state.start_date if state else None,
+                     'name': modelname })

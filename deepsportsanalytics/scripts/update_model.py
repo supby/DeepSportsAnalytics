@@ -31,12 +31,16 @@ if __name__ == '__main__':
     parser.add_argument('--dt')
     parser.add_argument('--mn')
     parser.add_argument('--r')
+    parser.add_argument('--tss')
+    parser.add_argument('--gs')
     args = parser.parse_args()
 
     date_from = date_utils.try_parse(args.df)
     date_to = date_utils.try_parse(args.dt)
     model_name = args.mn
     reset_data = args.r == 'true'
+    team_stat_season = int(args.tss)
+    games_season = int(args.gs)
 
     AzureModelService(
                 model_storage=AzureBlobStorage(
@@ -47,8 +51,8 @@ if __name__ == '__main__':
                                         global_config.COMMON['azure_storage_name'],
                                         global_config.COMMON['azure_storage_key'],
                                         '%s-data' % model_name),
-                data_source=NHLRefDataSource(team_stat_season=2015,
-                                             games_season=2015,
+                data_source=NHLRefDataSource(team_stat_season=team_stat_season,
+                                             games_season=games_season,
                                              cache=DefaultCache.get_instance(),
                                              fvector_len=global_config.MODEL['fvector_length']))\
         .update(date_from=date_from, date_to=date_to, reset_data=reset_data)

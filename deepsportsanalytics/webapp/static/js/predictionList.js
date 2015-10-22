@@ -1,6 +1,7 @@
 var PredictionListModel = Backbone.Model.extend({
     defaults: function () {
         return {
+          model_name: null,
           filter: null,
           predictDateFrom: null,
           predictDateTo: null,
@@ -58,7 +59,7 @@ var PredictionListView = Backbone.View.extend({
       this.$el.html(_.template($('#predictions-template').text())(this.model.toJSON()));
       this.$el.append(
         new StatModelStateView({
-          model: new StatModelStateModel({ id: 'model' })
+          model: new StatModelStateModel({ id: this.model.get('model_name') })
         }).render().el)
       this.$('.predict-game-datepicker')
           .text(this.model.get('predictDateFrom').format("YYYY-MM-DD"))

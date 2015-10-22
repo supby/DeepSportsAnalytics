@@ -9,12 +9,14 @@
 {% block content %}
   <div id="app">
     <div class="row">
-      <div class="large-7 columns">
-          <div class="panel" id="predictions-container">
-            {% include 'predictions.html' %}
-          </div>
-        </div>
+      <div class="large-6 columns">
+          <div class="panel" id="predictions-container"></div>
+      </div>
+      <div class="large-6 columns">
+          <div class="panel" id="predictions-container2"></div>
+      </div>
     </div>
   </div>
   {% include 'statModelState.html' %}
+  {% include 'predictions.html' %}
 {% endblock %}

@@ -9,9 +9,11 @@ $(function () {
         el: $("#app"),
 
         initialize: function () {
+        },
+        render: function () {
           this.$('#predictions-container').append(
             new PredictionListView({ model: new PredictionListModel({
-                        model_name: 'model',
+                        modelName: 'model',
                         predictDateFrom: moment().add(1, 'days'),
                         predictDateTo: moment().add(2, 'days'),
                       })
@@ -19,15 +21,13 @@ $(function () {
 
             this.$('#predictions-container2').append(
               new PredictionListView({ model: new PredictionListModel({
-                          model_name: 'model-ns',
+                          modelName: 'model-ns',
                           predictDateFrom: moment().add(1, 'days'),
                           predictDateTo: moment().add(2, 'days'),
                         })
               }).render().el);
-        },
-        render: function () {
           return this;
         },
     });
-    var App = new AppView({ model: new AppModel() });
+    var App = new AppView({ model: new AppModel() }).render();
 });

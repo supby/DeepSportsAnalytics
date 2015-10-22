@@ -23,8 +23,6 @@ var PredictionList = Backbone.Collection.extend({
     }
 });
 
-var Predictions = new PredictionList;
-
 var PredictionView = Backbone.View.extend({
     tagName: 'tr',
     render: function () {

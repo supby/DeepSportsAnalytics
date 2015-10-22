@@ -1,45 +1,46 @@
 var PredictionListModel = Backbone.Model.extend({
     defaults: function () {
         return {
-          model_name: null,
+          modelName: null,
           filter: null,
           predictDateFrom: null,
           predictDateTo: null,
-          predictionsUrl: 'api/v1.0/predict/model'
+          predictionsUrl: 'api/v1.0/predict',
+          predictions: new PredictionList
         };
-    },
-    loadPredictions: function(){
-      Predictions.url = this.attributes['predictionsUrl']
-                + '/' + this.attributes['predictDateFrom'].format("YYYY-MM-DD")
-                + '/' + this.attributes['predictDateTo'].format("YYYY-MM-DD");
-      Predictions.fetch();
-    },
-
+    }
 });
 
 var PredictionListView = Backbone.View.extend({
     initialize: function () {
-      this.listenTo(Predictions, 'sync', this.addAll);
+      this.listenTo(this.model.get('predictions'), 'sync', this.addAll);
     },
     loadPredictions: function() {
       this.resetList();
       this.setNoData(false);
       this.setLoading(true);
-      this.model.loadPredictions();
+
+      var preds = this.model.get('predictions');
+      preds.url = this.model.get('predictionsUrl')
+                + '/' + this.model.get('modelName')
+                + '/' + this.model.get('predictDateFrom').format("YYYY-MM-DD")
+                + '/' + this.model.get('predictDateTo').format("YYYY-MM-DD");
+      preds.fetch();
     },
     addOne: function (prediction) {
       if (!prediction.isNull())
-        $('.predictions-table-tbody')
+        this.$('.predictions-table-tbody')
           .append(new PredictionView({ model: prediction }).render().el);
       else
         this.setNoData(true);
     },
     addAll: function () {
-      if(Predictions.length == 0)
+      var preds = this.model.get('predictions');
+      if(preds.length == 0)
         this.setNoData(true);
       else {
         this.setNoData(false);
-        Predictions.each(this.addOne, this);
+        preds.each(this.addOne, this);
       }
       this.setLoading(false);
     },
@@ -59,7 +60,7 @@ var PredictionListView = Backbone.View.extend({
       this.$el.html(_.template($('#predictions-template').text())(this.model.toJSON()));
       this.$el.append(
         new StatModelStateView({
-          model: new StatModelStateModel({ id: this.model.get('model_name') })
+          model: new StatModelStateModel({ id: this.model.get('modelName') })
         }).render().el)
       this.$('.predict-game-datepicker')
           .text(this.model.get('predictDateFrom').format("YYYY-MM-DD"))

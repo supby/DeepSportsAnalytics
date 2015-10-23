@@ -93,12 +93,11 @@ def get_updating_status(modelname):
                         .filter(UpdateStatModel.name == modelname)\
                         .order_by(desc(UpdateStatModel.id))\
                         .first()
-    jsonify({ 'id': state.id,
-              'name': state.name,
-              'status': state.status,
-              'start_date': state.start_date,
-              'end_date': state.end_date,
-              'state': state.state })
+    return jsonify({ 'id': state.id,
+                      'name': state.name,
+                      'status': state.status,
+                      'start_date': state.start_date,
+                      'end_date': state.end_date })
 
 
 @webapi_admin.route('/api/v1.0/updatemodel/lastupdate/<modelname>', methods=['GET'])

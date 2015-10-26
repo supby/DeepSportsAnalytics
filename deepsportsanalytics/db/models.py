@@ -6,7 +6,7 @@ from db import Base
 
 logger = logging.getLogger(__name__)
 
-class UpdateStatModel(Base):
+class UpdateStatModelHistory(Base):
     __tablename__ = 'update_stat_model'
     id = Column(Integer, primary_key=True)
     name = Column(String(50), nullable=False)

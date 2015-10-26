@@ -28,10 +28,8 @@ from services.model_service_azure import AzureModelService
 from utils import date_utils
 from utils.thread_utils import AsyncMethod
 from db import db_session
-from db.models import UpdateStatModel
+from db.repository import StatModelRepository
 from db import get_db_session_scope
-from extensions.sqlalchemy_ext import AlchemyEncoder
-from extensions.sqlalchemy_ext import aljesonify
 
 logger = logging.getLogger(__name__)
 
@@ -55,11 +53,9 @@ def __update_async(model_name, date_from, date_to, reset_data, model_status_id):
         .update(date_from=date_from, date_to=date_to, reset_data=reset_data)
 
     with get_db_session_scope() as s:
-        UpdateStatModel.query\
-                        .filter(UpdateStatModel.name == model_name,\
-                                UpdateStatModel.id == model_status_id)\
-                        .update({'status': 2, 'end_date': datetime.utcnow() })
-        s.commit()
+        StatModelRepository(s)\
+            .update_history_status(2, model_name, model_status_id)
+
 
 @webapi_admin.route('/api/v1.0/updatemodel/<modelname>/<datefrom>/<dateto>/<resetdata>', methods=['GET'])
 def update_model(modelname, datefrom, dateto, resetdata):
@@ -74,25 +70,19 @@ def update_model(modelname, datefrom, dateto, resetdata):
         raise BadRequest
 
     try:
-        model_status = UpdateStatModel(modelname, 1)
-        db_session.add(model_status)
-        db_session.commit()
-
+        rec_id = StatModelRepository(db_session).create_history_rec()
         __update_async(modelname, date_from, date_to,
-                       resetdata=='true', model_status.id)
+                       resetdata=='true', rec_id)
 
         return 'Updating started.'
     except:
+        db_session.rollback()
         logger.error("%s: Unexpected error: %s" % (__name__, sys.exc_info()))
         raise InternalServerError
 
 @webapi_admin.route('/api/v1.0/updatemodel/status/<modelname>', methods=['GET'])
 def get_updating_status(modelname):
-    state = UpdateStatModel\
-                        .query\
-                        .filter(UpdateStatModel.name == modelname)\
-                        .order_by(desc(UpdateStatModel.id))\
-                        .first()
+    state = StatModelRepository(db_session).get_last_history(modelname)
     return jsonify({ 'id': state.id,
                       'name': state.name,
                       'status': state.status,
@@ -102,11 +92,6 @@ def get_updating_status(modelname):
 
 @webapi_admin.route('/api/v1.0/updatemodel/lastupdate/<modelname>', methods=['GET'])
 def get_last_update(modelname):
-    state = UpdateStatModel\
-                        .query\
-                        .filter(UpdateStatModel.name == modelname,
-                                UpdateStatModel.status == 2)\
-                        .order_by(desc(UpdateStatModel.id))\
-                        .first()
+    state = StatModelRepository(db_session).get_last_update(modelname)
     return jsonify({ 'lastUpdate': state.start_date if state else None,
                      'name': modelname })

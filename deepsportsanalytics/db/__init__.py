@@ -10,6 +10,9 @@ from sqlalchemy import exc
 logger = logging.getLogger(__name__)
 
 engine = create_engine('sqlite:///main.db', convert_unicode=True)
+# engine = create_engine('mssql+pyodbc://deepsport@qvt1nx7dx4:Cnhjyudjhr1@qvt1nx7dx4.database.windows.net:1433/deepsport',
+#                         convert_unicode=True)
+
 db_session = scoped_session(sessionmaker(autocommit=False,
                                          autoflush=False,
                                          bind=engine))
@@ -17,8 +20,8 @@ Base = declarative_base()
 Base.query = db_session.query_property()
 
 def init_db():
-    from db import models
     Base.metadata.create_all(bind=engine)
+    populate()
 
 @contextmanager
 def get_db_session_scope():
@@ -37,3 +40,25 @@ def get_db_session_scope():
         raise
     finally:
         session.close()
+
+def populate():
+    from db.models import *
+    session = db_session()
+    # fill models types
+    if session.query(StatModelType).filter(StatModelType.name=='scikitmodel').count() == 0:
+        session.add(StatModelType('scikitmodel'))
+        session.commit()
+    if session.query(StatModelType).filter(StatModelType.name=='dnnmodel').count() == 0:
+        session.add(StatModelType('dnn'))
+        session.commit()
+    # fill stat models
+    scmodel_type = session.query(StatModelType).filter(StatModelType.name=='scikitmodel').first()
+    dnn_type = session.query(StatModelType).filter(StatModelType.name=='dnnmodel').first()
+    if session.query(StatModel).filter(StatModel.name=='model',
+                                       StatModel.type==scmodel_type.id).count() == 0:
+        session.add(StatModel('model', scmodel_type.id))
+        session.commit()
+    if session.query(StatModel).filter(StatModel.name=='dnn_model',
+                                       StatModel.type==dnn_type.id).count() == 0:
+        session.add(StatModel('model', dnn_type.id))
+        session.commit()

@@ -13,8 +13,14 @@ from data.storage.azure_storage import AzureBlobStorage
 from shared.cache import DefaultCache
 from data.source.source_base import DataSourceFilter
 from data.source.nhlreference_source import NHLRefDataSource
+from data.source.data_source_factory import DataSourceFactory
 from services.model_service_azure import AzureModelService
+from services.data_service import DataService
+from services.prediction_service import PredictionService
 from utils import date_utils
+from statmodel.model_factory import StatModelFactory
+from db.repository import StatModelRepository
+from db import db_session
 
 logger = logging.getLogger(__name__)
 
@@ -32,21 +38,24 @@ def predict(modelname, datefrom, dateto):
         raise BadRequest
 
     try:
-        data_to_predict, data_to_predict_m, predictions = \
-            AzureModelService(
-                        model_storage=AzureBlobStorage(
-                                                global_config.COMMON['azure_storage_name'],
-                                                global_config.COMMON['azure_storage_key'],
-                                                modelname),
-                        data_storage=AzureBlobStorage(
-                                                global_config.COMMON['azure_storage_name'],
-                                                global_config.COMMON['azure_storage_key'],
-                                                '%s-data' % modelname),
-                        data_source=NHLRefDataSource(team_stat_season=2015,
-                                                     games_season=2016,
-                                                     cache=DefaultCache.get_instance(),
-                                                     fvector_len=global_config.MODEL['fvector_length']))\
-                    .predict(date_from, date_to)
+        ds = DataService(data_storage=AzureBlobStorage(
+                                global_config.COMMON['azure_storage_name'],
+                                global_config.COMMON['azure_storage_key'],
+                                '%s-data' % modelname),
+                    data_source_factory=DataSourceFactory())
+        data_to_predict, data_to_predict_m = ds.get_data(source_type='hnlref',
+                  filter=DataSourceFilter(date_from=date_from,
+                                        date_to=date_to,
+                                        limit=-1))
+
+        ps = PredictionService(model_storage=AzureBlobStorage(
+                                global_config.COMMON['azure_storage_name'],
+                                global_config.COMMON['azure_storage_key'],
+                                modelname),
+            stat_model_factory=StatModelFactory,
+            stat_model_repo=StatModelRepository(db_session))
+        predictions = ps.predict(data=data_to_predict[0],
+                                model_name=modelname)
 
         if not data_to_predict:
             return jsonify(data=None)

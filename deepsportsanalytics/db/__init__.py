@@ -9,9 +9,7 @@ from sqlalchemy import exc
 
 logger = logging.getLogger(__name__)
 
-engine = create_engine('sqlite:///main.db', convert_unicode=True)
-# engine = create_engine('mssql+pyodbc://deepsport@qvt1nx7dx4:Cnhjyudjhr1@qvt1nx7dx4.database.windows.net:1433/deepsport',
-#                         convert_unicode=True)
+engine = create_engine('sqlite:///deepsport.db', convert_unicode=True)
 
 db_session = scoped_session(sessionmaker(autocommit=False,
                                          autoflush=False,

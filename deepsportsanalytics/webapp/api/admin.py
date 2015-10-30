@@ -37,6 +37,16 @@ webapi_admin = Blueprint('webapi_admin', __name__)
 
 @AsyncMethod
 def __update_async(model_name, date_from, date_to, reset_data, model_status_id):
+
+    ds = DataService(data_source_factory=DataSourceFactory)
+    data_to_predict, data_to_predict_m = \
+        ds.get_data(data_source_type=datasourcetype,
+                    filter=DataSourceFilter(date_from=date_from,
+                                            date_to=date_to,
+                                            limit=-1))
+
+
+
     AzureModelService(
                 model_storage=AzureBlobStorage(
                                         global_config.COMMON['azure_storage_name'],

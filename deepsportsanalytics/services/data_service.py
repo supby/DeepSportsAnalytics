@@ -4,8 +4,7 @@ logger = logging.getLogger(__name__)
 
 class DataService(object):
 
-    def __init__(self, data_storage, data_source_factory):
-        self.__data_storage = data_storage
+    def __init__(self, data_source_factory):
         self.__data_source_factory = data_source_factory
 
     def get_data(self, data_source_type, filter):

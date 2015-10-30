@@ -38,11 +38,7 @@ def predict(modelname, datasourcetype, datefrom, dateto):
         raise BadRequest
 
     try:
-        ds = DataService(data_storage=AzureBlobStorage(
-                                global_config.COMMON['azure_storage_name'],
-                                global_config.COMMON['azure_storage_key'],
-                                '%s-data' % modelname),
-                    data_source_factory=DataSourceFactory)
+        ds = DataService(data_source_factory=DataSourceFactory)
         data_to_predict, data_to_predict_m = \
             ds.get_data(data_source_type=datasourcetype,
                         filter=DataSourceFilter(date_from=date_from,

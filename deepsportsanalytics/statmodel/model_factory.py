@@ -1,12 +1,17 @@
+import logging
+
 from statmodel.scikit_model import ScikitModel
-from statmodel.dnn_model import DNNModel
+# from statmodel.dnn_model import DNNModel
+
+logger = logging.getLogger(__name__)
 
 class StatModelFactory(object):
     __models_map = {
-        'scikitmodel': ScikitModel(model=LogisticRegression(penalty='l2', C=0.7)),
-        'dnn': DNNModel()
+        'scikitmodel': lambda: ScikitModel(model=LogisticRegression(penalty='l2', C=0.7)),
+        # 'dnn': lambda: DNNModel()
     }
 
     @staticmethod
     def create(model_type):
-        __models_map.get('model_type', None)
+        logger.info('create: model_type = %s' % model_type)
+        return StatModelFactory.__models_map.get('model_type', lambda: None)()

@@ -2,6 +2,7 @@ var PredictionListModel = Backbone.Model.extend({
     defaults: function () {
         return {
           modelName: null,
+          dataSourceType: 'nhlref',
           filter: null,
           predictDateFrom: null,
           predictDateTo: null,
@@ -23,6 +24,7 @@ var PredictionListView = Backbone.View.extend({
       var preds = this.model.get('predictions');
       preds.url = this.model.get('predictionsUrl')
                 + '/' + this.model.get('modelName')
+                + '/' + this.model.get('dataSourceType')
                 + '/' + this.model.get('predictDateFrom').format("YYYY-MM-DD")
                 + '/' + this.model.get('predictDateTo').format("YYYY-MM-DD");
       preds.fetch();

@@ -51,7 +51,7 @@ def populate():
         session.commit()
     # fill stat models
     scmodel_type = session.query(StatModelType).filter(StatModelType.name=='scikitmodel').first()
-    dnn_type = session.query(StatModelType).filter(StatModelType.name=='dnnmodel').first()
+    dnn_type = session.query(StatModelType).filter(StatModelType.name=='dnn').first()
     if session.query(StatModel).filter(StatModel.name=='model',
                                        StatModel.type==scmodel_type.id).count() == 0:
         session.add(StatModel('model', scmodel_type.id))

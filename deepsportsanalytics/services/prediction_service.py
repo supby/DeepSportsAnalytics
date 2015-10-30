@@ -10,6 +10,7 @@ class PredictionService(object):
         self.__stat_model_repo = stat_model_repo
 
     def predict(self, data, model_name):
+        logger.info('predict: model_name = %s' % model_name)
         return self.__model_storage.get(model_name).predict(data)
 
     def update(self, data, model_name):

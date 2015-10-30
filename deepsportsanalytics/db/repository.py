@@ -1,5 +1,7 @@
 import logging
 
+from sqlalchemy import asc, desc
+
 from db.models import StatModel
 from db.models import UpdateStatModelHistory
 

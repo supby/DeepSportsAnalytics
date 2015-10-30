@@ -26,8 +26,8 @@ logger = logging.getLogger(__name__)
 
 webapi = Blueprint('webapi', __name__)
 
-@webapi.route('/api/v1.0/predict/<modelname>/<datefrom>/<dateto>', methods=['GET'])
-def predict(modelname, data_source_type, datefrom, dateto):
+@webapi.route('/api/v1.0/predict/<modelname>/<datasourcetype>/<datefrom>/<dateto>', methods=['GET'])
+def predict(modelname, datasourcetype, datefrom, dateto):
     date_from = date_utils.try_parse(datefrom)
     date_to = date_utils.try_parse(dateto)
     if not date_from:
@@ -42,9 +42,9 @@ def predict(modelname, data_source_type, datefrom, dateto):
                                 global_config.COMMON['azure_storage_name'],
                                 global_config.COMMON['azure_storage_key'],
                                 '%s-data' % modelname),
-                    data_source_factory=DataSourceFactory())
+                    data_source_factory=DataSourceFactory)
         data_to_predict, data_to_predict_m = \
-            ds.get_data(data_source_type='hnlref',
+            ds.get_data(data_source_type=datasourcetype,
                         filter=DataSourceFilter(date_from=date_from,
                                                 date_to=date_to,
                                                 limit=-1))

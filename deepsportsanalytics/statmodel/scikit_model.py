@@ -8,9 +8,7 @@ logger = logging.getLogger(__name__)
 
 class ScikitModel(ModelBase):
 
-    def __init__(self, X, Y, model, scaler=None):
-        self.X = X
-        self.Y = Y
+    def __init__(self, model, scaler=None):
         self.model = model
         self.scaler = scaler
 
@@ -21,10 +19,10 @@ class ScikitModel(ModelBase):
             X_new = self.scaler.fit_transform(X)
         return X_new
 
-    def train(self):
+    def train(self, X, Y):
         logger.info('[train]: start')
 
-        self.model = self.model.fit(self.__scale_data(self.X), self.Y)
+        self.model = self.model.fit(self.__scale_data(X), Y)
 
         logger.info('[train]: end')
 

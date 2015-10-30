@@ -38,10 +38,8 @@ class AzureModelService(ModelServiceBase):
         logger.info('[update]: date_from=%s, date_to=%s' % (date_from, date_to))
 
         updated_dataset = self.__get_new_data(date_from, date_to, reset_data)
-        model = ScikitModel(updated_dataset[0],
-                                 updated_dataset[1],
-                                 LogisticRegression(penalty='l2', C=0.7))
-        model.train()
+        model = ScikitModel(LogisticRegression(penalty='l2', C=0.7))
+        model.train(updated_dataset[0], updated_dataset[1])
         self.__model_storage.set('model', model)
 
     def predict(self, date_predict_from, date_predict_to):

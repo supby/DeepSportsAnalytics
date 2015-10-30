@@ -12,13 +12,12 @@ MAX_EPOCHS_UNSUPERVISED = 30
 
 class DNNModel(ModelBase):
 
-    def __init__(self, X, Y, scaler=None):
-        self.__data = DNNDATA(X=X, Y=Y, scaler=scaler)
-        self.__ds_train, self.__ds_valid = self.__data.split(0.7)
-        self.__ds_valid, self.__ds_test = self.__ds_valid.split(0.7)
+    def train(self, X, Y):
+        data = DNNDATA(X=X, Y=Y, scaler=scaler)
+        ds_train, ds_valid = data.split(0.7)
+        ds_valid, ds_test = ds_valid.split(0.7)
 
-    def train(self):
-        Train(dataset=self.__ds_train,
+        Train(dataset=ds_train,
             model=mlp.MLP(
                 batch_size=_BATCH_SIZE,
                 layers=[
@@ -72,11 +71,11 @@ class DNNModel(ModelBase):
         return np.argmax(ann.fprop(theano.shared(inp, name='inputs')).eval())
 
 
-    def __pre_train_dae_l1(self):
-        return Train(dataset=self.__ds_train,
+    def __pre_train_dae_l1(self, ds_train, ds_valid):
+        return Train(dataset=ds_train,
                         model=DenoisingAutoencoder(
                                             corruptor=BinomialCorruptor(corruption_level=0.3),
-                                            nvis=self.__ds_train.nr_inputs,
+                                            nvis=ds_train.nr_inputs,
                                             nhid=300,
                                             tied_weights=True,
                                             act_enc='tanh',
@@ -88,17 +87,17 @@ class DNNModel(ModelBase):
                             cost=MeanSquaredReconstructionError(),
                             batch_size=10,
                             monitoring_batches=10,
-                            monitoring_dataset=self.__ds_valid,
+                            monitoring_dataset=ds_valid,
                             termination_criterion=EpochCounter(max_epochs=MAX_EPOCHS_UNSUPERVISED),
                             update_callbacks=None
                         )
                 ).main_loop()
 
-    def __pre_train_dae_l2(self):
+    def __pre_train_dae_l2(self, ds_train, ds_valid):
         transformer = pickle.load(open('./dae_l1.pkl', 'rb'))
 
         return Train(dataset=transformer_dataset.TransformerDataset(
-                    raw=self.__ds_train,
+                    raw=ds_train,
                     transformer=transformer
                             ),
                             model=Autoencoder(
@@ -115,7 +114,7 @@ class DNNModel(ModelBase):
                                 batch_size=10,
                                 monitoring_batches=10,
                                 monitoring_dataset=transformer_dataset.TransformerDataset(
-                                            raw=self.__ds_valid,
+                                            raw=ds_valid,
                                             transformer=transformer
                                 ),
                                 termination_criterion=EpochCounter(max_epochs=MAX_EPOCHS_UNSUPERVISED),

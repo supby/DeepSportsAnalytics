@@ -42,7 +42,7 @@ class NHLRefDataSource(DataSourceBase):
         if self.__cache_team_stats:
             self.__team_stat_cache = {}
 
-    def load(self, filter, skip_no_score):
+    def load(self, filter):
         """load nhl data"""
         super(NHLRefDataSource, self).load(filter)
 
@@ -54,13 +54,13 @@ class NHLRefDataSource(DataSourceBase):
                                    'table#games_playoffs tbody tr']:
                 logger.info("Process table: %s" % table_selector)
 
-                d = self.__extract_data(table_rows=pq(url=self.__BASE_URL
-                                            + self.__games_url)(table_selector),
-                                            base_url=self.__BASE_URL,
-                                            date_from=filter.dateFrom,
-                                            date_to=filter.dateTo,
-                                            limit=filter.limit,
-                                            proccess_if_no_scores=not skip_no_score)
+                d = self.__extract_data(
+                    table_rows=pq(url=self.__BASE_URL+self.__games_url)(table_selector),
+                                base_url=self.__BASE_URL,
+                                date_from=filter.dateFrom,
+                                date_to=filter.dateTo,
+                                limit=filter.limit,
+                                proccess_if_no_scores=not filter.skip_no_score)
 
                 data = ((data[0][0]+d[0][0], data[0][1]+d[0][1]), data[1] + d[1])
 

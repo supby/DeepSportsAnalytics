@@ -3,6 +3,7 @@ import logging
 from sqlalchemy import asc, desc
 
 from db.models import StatModel
+from db.models import StatModelType
 from db.models import UpdateStatModelHistory
 
 logger = logging.getLogger(__name__)
@@ -11,15 +12,18 @@ class StatModelRepository(object):
     def __init__(self, db_session):
         self.__db_session = db_session
 
-    def get_type_by_name(model_name):
-        logger.info('get_type_by_name')
+    def get_type_by_name(self, model_name):
+        logger.info('get_type_by_name: model_name = %s' % model_name)
 
-        return StatModel.query\
+        return StatModelType.query\
+                        .join(StatModel)\
                         .filter(StatModel.name == model_name)\
-                        .first().type
+                        .first().name
 
-    def create_history_rec(self):
-        rec = UpdateStatModel(modelname, 1)
+    def create_history_rec(self, model_name):
+        logger.info('create history record: model_name = %s' % model_name)
+
+        rec = UpdateStatModelHistory(model_name, 1)
         self.__db_session.add(rec)
         self.__db_session.commit()
 
@@ -28,7 +32,7 @@ class StatModelRepository(object):
     def update_history_status(self, status, model_name, rec_id):
         UpdateStatModelHistory.query\
                         .filter(UpdateStatModelHistory.name == model_name,\
-                                UpdateStatModel.id == rec_id)\
+                                UpdateStatModelHistory.id == rec_id)\
                         .update({'status': status, 'end_date': datetime.utcnow() })
         self.__db_session
 

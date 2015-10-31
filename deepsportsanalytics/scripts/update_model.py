@@ -10,7 +10,6 @@ from data.storage.azure_storage import AzureBlobStorage
 from shared.cache import DefaultCache
 from data.source.source_base import DataSourceFilter
 from data.source.nhlreference_source import NHLRefDataSource
-from services.model_service_azure import AzureModelService
 from utils import date_utils
 from utils.thread_utils import AsyncMethod
 

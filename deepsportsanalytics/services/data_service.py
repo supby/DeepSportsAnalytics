@@ -11,4 +11,4 @@ class DataService(object):
         logger.info('get_data, data_source_type = %s' % data_source_type)
 
         data_source = self.__data_source_factory.create(data_source_type)
-        return data_source.load(filter=filter, skip_no_score=False)
+        return data_source.load(filter=filter)

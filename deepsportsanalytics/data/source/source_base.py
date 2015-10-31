@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 class DataSourceFilter():
 
-    def __init__(self, date_from, date_to, limit):
+    def __init__(self, date_from, date_to, limit, skip_no_score):
         if date_from:
             assert isinstance(date_from, datetime.date), \
                 "date_from must be datetime.date"
@@ -24,9 +24,10 @@ class DataSourceFilter():
         self.dateFrom = date_from
         self.dateTo = date_to
         self.limit = limit
-        
+        self.skip_no_score = skip_no_score
+
     def __str__(self):
-        return "%s_%s_%s" % (str(self.dateFrom), 
+        return "%s_%s_%s" % (str(self.dateFrom),
                              str(self.dateTo), str(self.limit))
 
 
@@ -38,5 +39,3 @@ class DataSourceBase(object):
         """load data from url"""
         assert isinstance(filter, DataSourceFilter), \
             "filter must be instance of DataSourceFilter class"
-
-

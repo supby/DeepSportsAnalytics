@@ -24,51 +24,62 @@ from data.storage.azure_storage import AzureBlobStorage
 from shared.cache import DefaultCache
 from data.source.source_base import DataSourceFilter
 from data.source.nhlreference_source import NHLRefDataSource
-from services.model_service_azure import AzureModelService
 from utils import date_utils
 from utils.thread_utils import AsyncMethod
 from db import db_session
 from db.repository import StatModelRepository
 from db import get_db_session_scope
+from services.data_service import DataService
+from services.prediction_service import PredictionService
+from data.source.data_source_factory import DataSourceFactory
+from statmodel.model_factory import StatModelFactory
 
 logger = logging.getLogger(__name__)
 
 webapi_admin = Blueprint('webapi_admin', __name__)
 
 @AsyncMethod
-def __update_async(model_name, date_from, date_to, reset_data, model_status_id):
+def __update_async(model_name, date_from, date_to,
+                   reset_data, model_status_id, data_source_type):
+    logger.info('update_async: model_name=%s, date_from=%s, date_to=%s, \
+                reset_data=%s, model_status_id=%s'
+                % (model_name, date_from, date_to, reset_data, model_status_id))
 
     ds = DataService(data_source_factory=DataSourceFactory)
-    data_to_predict, data_to_predict_m = \
-        ds.get_data(data_source_type=datasourcetype,
+    new_data_set, new_data_set_m = \
+        ds.get_data(data_source_type=data_source_type,
                     filter=DataSourceFilter(date_from=date_from,
                                             date_to=date_to,
-                                            limit=-1))
+                                            limit=-1,
+                                            skip_no_score=True))
+    data_storage=AzureBlobStorage(global_config.COMMON['azure_storage_name'],
+                                  global_config.COMMON['azure_storage_key'],
+                                  '%s-data' % model_name)
+    current_dataset = ([], [])
+    if not reset_data:
+        current_dataset = data_storage.get('traindata', ([], []))
+    else:
+        logger.info('reset current train data.')
 
+    updated_dataset = (current_dataset[0] + new_data_set[0],
+                       current_dataset[1] + new_data_set[1])
+    data_storage.set('traindata', updated_dataset)
 
-
-    AzureModelService(
-                model_storage=AzureBlobStorage(
-                                        global_config.COMMON['azure_storage_name'],
-                                        global_config.COMMON['azure_storage_key'],
-                                        model_name),
-                data_storage=AzureBlobStorage(
-                                        global_config.COMMON['azure_storage_name'],
-                                        global_config.COMMON['azure_storage_key'],
-                                        '%s-data' % model_name),
-                data_source=NHLRefDataSource(team_stat_season=2015,
-                                             games_season=2016,
-                                             cache=DefaultCache.get_instance(),
-                                             fvector_len=global_config.MODEL['fvector_length']))\
-        .update(date_from=date_from, date_to=date_to, reset_data=reset_data)
+    ps = PredictionService(model_storage=AzureBlobStorage(
+                            global_config.COMMON['azure_storage_name'],
+                            global_config.COMMON['azure_storage_key'],
+                            model_name),
+        stat_model_factory=StatModelFactory,
+        stat_model_repo=StatModelRepository(db_session))
+    ps.update(updated_dataset, model_name);
 
     with get_db_session_scope() as s:
         StatModelRepository(s)\
             .update_history_status(2, model_name, model_status_id)
 
 
-@webapi_admin.route('/api/v1.0/updatemodel/<modelname>/<datefrom>/<dateto>/<resetdata>', methods=['GET'])
-def update_model(modelname, datefrom, dateto, resetdata):
+@webapi_admin.route('/api/v1.0/updatemodel/<modelname>/<datasourcetype>/<datefrom>/<dateto>/<resetdata>', methods=['GET'])
+def update_model(modelname, datasourcetype, datefrom, dateto, resetdata):
     """update model throughout web call"""
     date_from = date_utils.try_parse(datefrom)
     date_to = date_utils.try_parse(dateto)
@@ -80,9 +91,9 @@ def update_model(modelname, datefrom, dateto, resetdata):
         raise BadRequest
 
     try:
-        rec_id = StatModelRepository(db_session).create_history_rec()
+        rec_id = StatModelRepository(db_session).create_history_rec(modelname)
         __update_async(modelname, date_from, date_to,
-                       resetdata=='true', rec_id)
+                       resetdata=='true', rec_id, datasourcetype)
 
         return 'Updating started.'
     except:

@@ -14,7 +14,6 @@ from shared.cache import DefaultCache
 from data.source.source_base import DataSourceFilter
 from data.source.nhlreference_source import NHLRefDataSource
 from data.source.data_source_factory import DataSourceFactory
-from services.model_service_azure import AzureModelService
 from services.data_service import DataService
 from services.prediction_service import PredictionService
 from utils import date_utils
@@ -43,7 +42,8 @@ def predict(modelname, datasourcetype, datefrom, dateto):
             ds.get_data(data_source_type=datasourcetype,
                         filter=DataSourceFilter(date_from=date_from,
                                                 date_to=date_to,
-                                                limit=-1))
+                                                limit=-1,
+                                                skip_no_score=False))
 
         ps = PredictionService(model_storage=AzureBlobStorage(
                                 global_config.COMMON['azure_storage_name'],

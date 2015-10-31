@@ -53,10 +53,18 @@ def populate():
     scmodel_type = session.query(StatModelType).filter(StatModelType.name=='scikitmodel').first()
     dnn_type = session.query(StatModelType).filter(StatModelType.name=='dnn').first()
     if session.query(StatModel).filter(StatModel.name=='model',
-                                       StatModel.type==scmodel_type.id).count() == 0:
+                                       StatModel.model_type==scmodel_type.id).count() == 0:
         session.add(StatModel('model', scmodel_type.id))
         session.commit()
+    if session.query(StatModel).filter(StatModel.name=='model-ns',
+                                       StatModel.model_type==scmodel_type.id).count() == 0:
+        session.add(StatModel('model-ns', scmodel_type.id))
+        session.commit()
+    if session.query(StatModel).filter(StatModel.name=='model-tmp',
+                                       StatModel.model_type==scmodel_type.id).count() == 0:
+        session.add(StatModel('model-tmp', scmodel_type.id))
+        session.commit()
     if session.query(StatModel).filter(StatModel.name=='dnn_model',
-                                       StatModel.type==dnn_type.id).count() == 0:
-        session.add(StatModel('model', dnn_type.id))
+                                       StatModel.model_type==dnn_type.id).count() == 0:
+        session.add(StatModel('model-dnn', dnn_type.id))
         session.commit()

@@ -31,6 +31,7 @@ from db.repository import StatModelRepository
 from db import get_db_session_scope
 from services.data_service import DataService
 from services.prediction_service import PredictionService
+from services.update_service import UpdateService
 from data.source.data_source_factory import DataSourceFactory
 from statmodel.model_factory import StatModelFactory
 
@@ -45,33 +46,22 @@ def __update_async(model_name, date_from, date_to,
                 reset_data=%s, model_status_id=%s'
                 % (model_name, date_from, date_to, reset_data, model_status_id))
 
-    ds = DataService(data_source_factory=DataSourceFactory)
-    new_data_set, new_data_set_m = \
-        ds.get_data(data_source_type=data_source_type,
-                    filter=DataSourceFilter(date_from=date_from,
-                                            date_to=date_to,
-                                            limit=-1,
-                                            skip_no_score=True))
-    data_storage=AzureBlobStorage(global_config.COMMON['azure_storage_name'],
-                                  global_config.COMMON['azure_storage_key'],
-                                  '%s-data' % model_name)
-    current_dataset = ([], [])
-    if not reset_data:
-        current_dataset = data_storage.get('traindata', ([], []))
-    else:
-        logger.info('reset current train data.')
+    us = UpdateService(DataService(data_source_factory=DataSourceFactory),
+                       PredictionService(model_storage=AzureBlobStorage(
+                                global_config.COMMON['azure_storage_name'],
+                                global_config.COMMON['azure_storage_key'],
+                                model_name),
+                                stat_model_factory=StatModelFactory,
+                                stat_model_repo=StatModelRepository(db_session)),
+                        AzureBlobStorage(global_config.COMMON['azure_storage_name'],
+                                      global_config.COMMON['azure_storage_key'],
+                                      '%s-data' % model_name))
 
-    updated_dataset = (current_dataset[0] + new_data_set[0],
-                       current_dataset[1] + new_data_set[1])
-    data_storage.set('traindata', updated_dataset)
-
-    ps = PredictionService(model_storage=AzureBlobStorage(
-                            global_config.COMMON['azure_storage_name'],
-                            global_config.COMMON['azure_storage_key'],
-                            model_name),
-        stat_model_factory=StatModelFactory,
-        stat_model_repo=StatModelRepository(db_session))
-    ps.update(updated_dataset[0], updated_dataset[1], model_name);
+    us.update(filter=DataSourceFilter(date_from=date_from, date_to=date_to,
+                                limit=-1, skip_no_score=True),
+              model_name=model_name,
+              data_source_type=data_source_type,
+              reset_data=reset_data)
 
     with get_db_session_scope() as s:
         StatModelRepository(s)\

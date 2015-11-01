@@ -12,6 +12,15 @@ from data.source.source_base import DataSourceFilter
 from data.source.nhlreference_source import NHLRefDataSource
 from utils import date_utils
 from utils.thread_utils import AsyncMethod
+from services.update_service import UpdateService
+from services.data_service import DataService
+from services.prediction_service import PredictionService
+from db.repository import StatModelRepository
+from db import get_db_session_scope
+from db import init_db
+
+from data.source.data_source_factory import DataSourceFactory
+from statmodel.model_factory import StatModelFactory
 
 root_logger = logging.getLogger()
 root_logger.setLevel(logging.INFO)
@@ -29,6 +38,7 @@ if __name__ == '__main__':
     parser.add_argument('--df')
     parser.add_argument('--dt')
     parser.add_argument('--mn')
+    parser.add_argument('--dst')
     parser.add_argument('--r')
     parser.add_argument('--tss')
     parser.add_argument('--gs')
@@ -37,21 +47,32 @@ if __name__ == '__main__':
     date_from = date_utils.try_parse(args.df)
     date_to = date_utils.try_parse(args.dt)
     model_name = args.mn
+    data_source_type = args.dst
     reset_data = args.r == 'true'
     team_stat_season = int(args.tss)
     games_season = int(args.gs)
 
-    AzureModelService(
-                model_storage=AzureBlobStorage(
-                                        global_config.COMMON['azure_storage_name'],
-                                        global_config.COMMON['azure_storage_key'],
-                                        model_name),
-                data_storage=AzureBlobStorage(
-                                        global_config.COMMON['azure_storage_name'],
-                                        global_config.COMMON['azure_storage_key'],
-                                        '%s-data' % model_name),
-                data_source=NHLRefDataSource(team_stat_season=team_stat_season,
-                                             games_season=games_season,
-                                             cache=DefaultCache.get_instance(),
-                                             fvector_len=global_config.MODEL['fvector_length']))\
-        .update(date_from=date_from, date_to=date_to, reset_data=reset_data)
+    init_db()
+
+    with get_db_session_scope() as db_session:
+        rec_id = StatModelRepository(db_session).create_history_rec(model_name)
+
+        us = UpdateService(DataService(data_source_factory=DataSourceFactory),
+                           PredictionService(model_storage=AzureBlobStorage(
+                                    global_config.COMMON['azure_storage_name'],
+                                    global_config.COMMON['azure_storage_key'],
+                                    model_name),
+                                    stat_model_factory=StatModelFactory,
+                                    stat_model_repo=StatModelRepository(db_session)),
+                            AzureBlobStorage(global_config.COMMON['azure_storage_name'],
+                                          global_config.COMMON['azure_storage_key'],
+                                          '%s-data' % model_name))
+
+        us.update(filter=DataSourceFilter(date_from=date_from, date_to=date_to,
+                                    limit=-1, skip_no_score=True),
+                  model_name=model_name,
+                  data_source_type=data_source_type,
+                  reset_data=reset_data)
+
+        StatModelRepository(db_session)\
+            .update_history_status(2, model_name, rec_id)

@@ -71,7 +71,7 @@ def __update_async(model_name, date_from, date_to,
                             model_name),
         stat_model_factory=StatModelFactory,
         stat_model_repo=StatModelRepository(db_session))
-    ps.update(updated_dataset, model_name);
+    ps.update(updated_dataset[0], updated_dataset[1], model_name);
 
     with get_db_session_scope() as s:
         StatModelRepository(s)\

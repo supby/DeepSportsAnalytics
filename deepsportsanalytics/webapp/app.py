@@ -23,36 +23,44 @@ from api.admin import webapi_admin
 from db import init_db
 from db import db_session
 
-root_logger = logging.getLogger()
-root_logger.setLevel(logging.INFO)
-
-fh = logging.FileHandler('/tmp/deepsportsanalytics.log')
-fh.setLevel(logging.INFO)
-
-ch = logging.StreamHandler()
-ch.setLevel(logging.INFO)
-
-formatter = logging.Formatter('[%(asctime)s] [%(process)d:%(thread)d] \
-                                [%(levelname)s] [%(module)s] [%(funcName)s] \
-                                %(message)s')
-ch.setFormatter(formatter)
-fh.setFormatter(formatter)
-
-root_logger.addHandler(ch)
-root_logger.addHandler(fh)
+ALLOWED_EXTENSIONS = set(['csv'])
 
 app = Flask(__name__)
-app.config.from_object('deepsportsanalytics.webapp.config.DevelopmentConfig')
 
-app.logger.addHandler(ch)
-app.logger.addHandler(fh)
+def create_app(env):
 
-app.register_blueprint(webapi)
-app.register_blueprint(webapi_admin)
+    root_logger = logging.getLogger()
+    root_logger.setLevel(logging.INFO)
 
-init_db()
+    fh = logging.FileHandler('/tmp/deepsportsanalytics.log')
+    fh.setLevel(logging.INFO)
 
-ALLOWED_EXTENSIONS = set(['csv'])
+    ch = logging.StreamHandler()
+    ch.setLevel(logging.INFO)
+
+    formatter = logging.Formatter('[%(asctime)s] [%(process)d:%(thread)d] \
+                                    [%(levelname)s] [%(module)s] [%(funcName)s] \
+                                    %(message)s')
+    ch.setFormatter(formatter)
+    fh.setFormatter(formatter)
+
+    root_logger.addHandler(ch)
+    root_logger.addHandler(fh)
+
+    if env == 'dev':
+        app.config.from_object('deepsportsanalytics.webapp.config.DevelopmentConfig')
+    if env == 'prod':
+        app.config.from_object('deepsportsanalytics.webapp.config.ProductionConfig')
+
+    app.logger.addHandler(ch)
+    app.logger.addHandler(fh)
+
+    app.register_blueprint(webapi)
+    app.register_blueprint(webapi_admin)
+
+    init_db()
+
+    return app
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -61,17 +69,6 @@ def allowed_file(filename):
 @app.route('/', methods=['GET'])
 def index():
     return render_template('index.html')
-
-@app.route('/predictfile', methods=['GET', 'POST'])
-@app.route('/predictfile/', methods=['GET', 'POST'])
-def predictfile():
-    if request.method == 'POST':
-        file = request.files['file']
-        if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            return redirect(url_for('uploaded_file', filename=filename))
-    return render_template('uploadcsv.html')
 
 @app.teardown_appcontext
 def shutdown_session(exception=None):

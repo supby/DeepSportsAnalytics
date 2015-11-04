@@ -9,8 +9,8 @@ logger = logging.getLogger(__name__)
 
 class RedisCache(object):
 
-    def __init__(self, host, port=6379):
-        self.__r = redis.StrictRedis(host=host, port=port, db=0)
+    def __init__(self, url):
+        self.__r = redis.from_url(url)
 
     def get(self, key):
         logger.info("RedisCache -> [get], key:%s" % str(key))

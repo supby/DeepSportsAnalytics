@@ -51,7 +51,7 @@ def predict(modelname, datasourcetype, datefrom, dateto):
                                 modelname),
             stat_model_factory=StatModelFactory,
             stat_model_repo=StatModelRepository(db_session))
-        predictions = ps.predict(data=data_to_predict[0],
+        predictions = ps.predict(X=data_to_predict[0],
                                 model_name=modelname)
 
         if not data_to_predict:

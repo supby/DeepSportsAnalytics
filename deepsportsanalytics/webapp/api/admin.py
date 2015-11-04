@@ -1,10 +1,3 @@
-# To change this license header, choose License Headers in Project Properties.
-# To change this template file, choose Tools | Templates
-# and open the template in the editor.
-
-__author__ = "andrej"
-__date__ = "$Jun 10, 2015 10:55:52 PM$"
-
 import sys
 from dateutil import parser
 import logging

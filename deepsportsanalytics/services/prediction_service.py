@@ -11,7 +11,7 @@ class PredictionService(object):
 
     def predict(self, X, model_name):
         logger.info('predict: model_name = %s' % model_name)
-        return self.__model_storage.get(model_name).predict(X)
+        return self.__model_storage.get('model').predict(X)
 
     def update(self, X, Y, model_name):
         logger.info('update started: model_name = %s' % model_name)

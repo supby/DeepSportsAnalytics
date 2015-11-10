@@ -3,7 +3,7 @@ import logging
 
 class BaseConfig(object):
     DEBUG = False
-    DEVELOPMENT = False
+    TESTING = False
     CSRF_ENABLED = True
     SECRET_KEY = 'this-really-needs-to-be-changed'
     UPLOAD_FOLDER = '/tmp'
@@ -12,17 +12,19 @@ class BaseConfig(object):
     LOGGING_LEVEL = logging.INFO
 
 class DevelopmentConfig(BaseConfig):
-    DEVELOPMENT = True
     DEBUG = True
     LOGGING_LEVEL = logging.DEBUG
 
 class TestConfig(BaseConfig):
-    DEVELOPMENT = False
-    DEBUG = False
-    LOGGING_LEVEL = logging.INFO
+    TESTING = True
+
+class ProductionConfig(BaseConfig):
+    MONGO_URI = os.environ['MONGOLAB_URI']
+    REDIS_URL = os.environ['REDIS_URL']
 
 __DEF_CONFIG = "deepsportsanalytics.webapp.config.DevelopmentConfig"
 __config = {
+    "production": "deepsportsanalytics.webapp.config.ProductionConfig",
     "development": "deepsportsanalytics.webapp.config.DevelopmentConfig",
     "testing": "deepsportsanalytics.webapp.config.TestingConfig",
     "default": __DEF_CONFIG

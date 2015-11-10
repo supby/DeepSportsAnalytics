@@ -11,7 +11,6 @@ from urlparse import urlparse
 from pyquery import PyQuery as pq
 
 from source_base import DataSourceBase
-from shared.cache import CacheBase
 
 logger = logging.getLogger(__name__)
 
@@ -26,9 +25,6 @@ class NHLRefDataSource(DataSourceBase):
 
     def __init__(self, team_stat_season, games_season, cache=None,
                  fvector_len=None, cache_team_stats=False):
-        if cache:
-            assert isinstance(cache, CacheBase), \
-                "cache must have CacheBase class as base one"
 
         self.__cache = cache
         self.__fvector_len = fvector_len
@@ -46,10 +42,12 @@ class NHLRefDataSource(DataSourceBase):
         """load nhl data"""
         super(NHLRefDataSource, self).load(filter)
 
-        data = (([],[]), [])
-        if self.__cache and self.__cache.contains(str(filter)):
+        data = None
+        if self.__cache:
             data = self.__cache.get(str(filter))
-        else:
+
+        if data == None:
+            data = (([],[]), [])
             for table_selector in ['table#games tbody tr',
                                    'table#games_playoffs tbody tr']:
                 logger.info("Process table: %s" % table_selector)
@@ -66,7 +64,7 @@ class NHLRefDataSource(DataSourceBase):
 
             if self.__cache:
                 self.__cache.set(str(filter), data)
-
+        print data
         return data
 
     def __extract_stats(self, stats_url):

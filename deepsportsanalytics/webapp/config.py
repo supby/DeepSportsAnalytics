@@ -19,8 +19,8 @@ class TestConfig(BaseConfig):
     TESTING = True
 
 class ProductionConfig(BaseConfig):
-    MONGO_URI = os.environ['MONGOLAB_URI']
-    REDIS_URL = os.environ['REDIS_URL']
+    MONGO_URI = os.environ.get('MONGOLAB_URI', None)
+    REDIS_URL = os.environ.get('REDIS_URL', None)
 
 __DEF_CONFIG = "deepsportsanalytics.webapp.config.DevelopmentConfig"
 __config = {

@@ -7,6 +7,7 @@ from flask import Blueprint
 from flask import jsonify
 from werkzeug.exceptions import BadRequest
 from werkzeug.exceptions import InternalServerError
+from flask import current_app as app
 
 import global_config
 from data.storage.azure_storage import AzureBlobStorage
@@ -37,14 +38,13 @@ def predict(modelname, datasourcetype, datefrom, dateto):
         raise BadRequest
 
     try:
-        ds = DataService(data_source_factory=DataSourceFactory)
+        ds = DataService(data_source_factory=DataSourceFactory(app.config))
         data_to_predict, data_to_predict_m = \
             ds.get_data(data_source_type=datasourcetype,
                         filter=DataSourceFilter(date_from=date_from,
                                                 date_to=date_to,
                                                 limit=-1,
                                                 skip_no_score=False))
-
         ps = PredictionService(model_storage=AzureBlobStorage(
                                 global_config.COMMON['azure_storage_name'],
                                 global_config.COMMON['azure_storage_key'],

@@ -11,6 +11,7 @@ from werkzeug.exceptions import BadRequest
 from werkzeug.exceptions import InternalServerError
 from flask import Response
 from sqlalchemy import asc, desc
+from flask import current_app as app
 
 import global_config
 from data.storage.azure_storage import AzureBlobStorage
@@ -39,7 +40,7 @@ def __update_async(model_name, date_from, date_to,
                 reset_data=%s, model_status_id=%s'
                 % (model_name, date_from, date_to, reset_data, model_status_id))
 
-    us = UpdateService(DataService(data_source_factory=DataSourceFactory),
+    us = UpdateService(DataService(data_source_factory=DataSourceFactory(app.config)),
                        PredictionService(model_storage=AzureBlobStorage(
                                 global_config.COMMON['azure_storage_name'],
                                 global_config.COMMON['azure_storage_key'],
@@ -99,3 +100,7 @@ def get_last_update(modelname):
     state = StatModelRepository(db_session).get_last_update(modelname)
     return jsonify({ 'lastUpdate': state.start_date if state else None,
                      'name': modelname })
+
+@webapi_admin.route('/api/v1.0/updatemodel/lastupdate/<modelname>', methods=['GET'])
+def set_last_update(modelname):
+    pass

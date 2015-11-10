@@ -6,7 +6,6 @@ import logging
 from pymongo import MongoClient
 
 from source_base import DataSourceBase
-from shared.cache import CacheBase
 
 logger = logging.getLogger(__name__)
 

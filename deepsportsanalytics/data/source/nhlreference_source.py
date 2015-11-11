@@ -64,7 +64,7 @@ class NHLRefDataSource(DataSourceBase):
 
             if self.__cache:
                 self.__cache.set(str(filter), data)
-        print data
+
         return data
 
     def __extract_stats(self, stats_url):

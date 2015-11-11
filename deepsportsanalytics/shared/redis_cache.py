@@ -2,6 +2,7 @@ from abc import ABCMeta
 from abc import abstractmethod
 import logging
 import threading
+import pickle
 
 import redis
 
@@ -14,8 +15,11 @@ class RedisCache(object):
 
     def get(self, key):
         logger.info("RedisCache -> [get], key:%s" % str(key))
-        return self.__r.get(key)
+        pickled_value = self.__r.get(key)
+        if pickled_value is None:
+            return None
+        return pickle.loads(pickled_value)
 
     def set(self, key, val):
         logger.info("RedisCache -> [set], key:%s" % str(key))
-        self.__r.set(key, val)
+        self.__r.set(key, pickle.dumps(val))

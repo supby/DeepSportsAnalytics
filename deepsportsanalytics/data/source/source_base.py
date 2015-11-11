@@ -27,8 +27,8 @@ class DataSourceFilter():
         self.skip_no_score = skip_no_score
 
     def __str__(self):
-        return "%s_%s_%s" % (str(self.dateFrom),
-                             str(self.dateTo), str(self.limit))
+        return "%s_%s" % (str(self.dateFrom),
+                             str(self.dateTo))
 
 
 class DataSourceBase(object):

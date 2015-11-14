@@ -40,7 +40,6 @@ class NHLRefDataSource(DataSourceBase):
 
     def load(self, filter):
         """load nhl data"""
-        super(NHLRefDataSource, self).load(filter)
 
         data = None
         if self.__cache:
@@ -55,10 +54,10 @@ class NHLRefDataSource(DataSourceBase):
                 d = self.__extract_data(
                     table_rows=pq(url=self.__BASE_URL+self.__games_url)(table_selector),
                                 base_url=self.__BASE_URL,
-                                date_from=filter.dateFrom,
-                                date_to=filter.dateTo,
-                                limit=filter.limit,
-                                proccess_if_no_scores=not filter.skip_no_score)
+                                date_from=filter['dateFrom'],
+                                date_to=filter['dateTo'],
+                                limit=filter['limit'],
+                                proccess_if_no_scores=not filter['skip_no_score'])
 
                 data = ((data[0][0]+d[0][0], data[0][1]+d[0][1]), data[1] + d[1])
 

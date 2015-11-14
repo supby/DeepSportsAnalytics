@@ -15,7 +15,6 @@ from flask import current_app as app
 
 from data.storage.azure_storage import AzureBlobStorage
 from shared.cache import DefaultCache
-from data.source.source_base import DataSourceFilter
 from data.source.nhlreference_source import NHLRefDataSource
 from utils import date_utils
 from utils.thread_utils import AsyncMethod
@@ -50,7 +49,7 @@ def __update_async(model_name, date_from, date_to,
                                       global_config.COMMON['azure_storage_key'],
                                       '%s-data' % model_name))
 
-    us.update(filter=DataSourceFilter(date_from=date_from, date_to=date_to,
+    us.update(filter=dict(date_from=date_from, date_to=date_to,
                                 limit=-1, skip_no_score=True),
               model_name=model_name,
               data_source_type=data_source_type,

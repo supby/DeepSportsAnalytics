@@ -11,31 +11,9 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-class DataSourceFilter():
-
-    def __init__(self, date_from, date_to, limit, skip_no_score):
-        if date_from:
-            assert isinstance(date_from, datetime.date), \
-                "date_from must be datetime.date"
-        if date_to:
-            assert isinstance(date_to, datetime.date), \
-                "date_to must be datetime.date"
-
-        self.dateFrom = date_from
-        self.dateTo = date_to
-        self.limit = limit
-        self.skip_no_score = skip_no_score
-
-    def __str__(self):
-        return "%s_%s" % (str(self.dateFrom),
-                             str(self.dateTo))
-
-
 class DataSourceBase(object):
     __metaclass__ = ABCMeta
 
     @abstractmethod
     def load(self, filter):
-        """load data from url"""
-        assert isinstance(filter, DataSourceFilter), \
-            "filter must be instance of DataSourceFilter class"
+        """load data from url"""      

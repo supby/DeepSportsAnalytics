@@ -4,9 +4,7 @@ from dateutil import parser
 import csv
 
 from data.source.nhlreference_source import NHLRefDataSource
-from data.source.source_base import DataSourceFilter
 from shared.cache import DefaultCache
-
 
 if __name__ == '__main__':
     date_from = datetime.datetime.date(parser.parse('2014-10-08'))
@@ -17,7 +15,7 @@ if __name__ == '__main__':
                                        cache_team_stats=True)
 
     new_data_set, new_data_set_m = \
-            data_source.load(filter=DataSourceFilter(
+            data_source.load(filter=dict(
                                     date_from=date_from,
                                     date_to=None,
                                     limit=-1),

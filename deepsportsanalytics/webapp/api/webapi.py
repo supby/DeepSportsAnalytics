@@ -11,7 +11,6 @@ from flask import current_app as app
 
 from data.storage.azure_storage import AzureBlobStorage
 from shared.cache import DefaultCache
-from data.source.source_base import DataSourceFilter
 from data.source.nhlreference_source import NHLRefDataSource
 from data.source.data_source_factory import DataSourceFactory
 from services.data_service import DataService
@@ -40,7 +39,7 @@ def predict(modelname, datasourcetype, datefrom, dateto):
         ds = DataService(data_source_factory=DataSourceFactory(app.config))
         data_to_predict, data_to_predict_m = \
             ds.get_data(data_source_type=datasourcetype,
-                        filter=DataSourceFilter(date_from=date_from,
+                        filter=dict(date_from=date_from,
                                                 date_to=date_to,
                                                 limit=-1,
                                                 skip_no_score=False))

@@ -5,7 +5,6 @@ import logging.config
 import argparse
 sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 
-import global_config
 from data.storage.azure_storage import AzureBlobStorage
 from shared.cache import DefaultCache
 from data.source.source_base import DataSourceFilter
@@ -74,5 +73,5 @@ if __name__ == '__main__':
                   data_source_type=data_source_type,
                   reset_data=reset_data)
 
-        StatModelRepository(db_session)\
-            .update_history_status(2, model_name, rec_id)
+        # StatModelRepository(db_session)\
+        #     .update_history_status(2, model_name, rec_id)

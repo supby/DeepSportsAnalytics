@@ -13,7 +13,6 @@ from flask import Response
 from sqlalchemy import asc, desc
 from flask import current_app as app
 
-import global_config
 from data.storage.azure_storage import AzureBlobStorage
 from shared.cache import DefaultCache
 from data.source.source_base import DataSourceFilter

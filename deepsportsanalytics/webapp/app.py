@@ -8,7 +8,6 @@ from werkzeug import secure_filename
 from flask import Flask, request, redirect, url_for
 from flask import render_template
 
-import global_config
 from api.webapi import webapi
 from api.admin import webapi_admin
 from db import init_db

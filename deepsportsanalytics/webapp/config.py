@@ -21,6 +21,8 @@ class TestConfig(BaseConfig):
 class ProductionConfig(BaseConfig):
     MONGO_URI = os.environ.get('MONGOLAB_URI', None)
     REDIS_URL = os.environ.get('REDIS_URL', None)
+    AZURE_STORAGE_NAME = os.environ.get('AZURE_STORAGE_NAME', None)
+    AZURE_STORAGE_KEY = os.environ.get('AZURE_STORAGE_KEY', None)
 
 __DEF_CONFIG = "deepsportsanalytics.webapp.config.DevelopmentConfig"
 __config = {

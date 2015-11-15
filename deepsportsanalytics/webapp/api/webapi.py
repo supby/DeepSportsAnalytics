@@ -29,10 +29,10 @@ def predict(modelname, datasourcetype, datefrom, dateto):
     date_from = date_utils.try_parse(datefrom)
     date_to = date_utils.try_parse(dateto)
     if not date_from:
-        logger.error('[predict] Error parse date.')
+        logger.error('Error parse date.')
         raise BadRequest
     if not date_to:
-        logger.error('[predict] Error parse date.')
+        logger.error('Error parse date.')
         raise BadRequest
 
     try:
@@ -40,12 +40,10 @@ def predict(modelname, datasourcetype, datefrom, dateto):
         data_to_predict, data_to_predict_m = \
             ds.get_data(data_source_type=datasourcetype,
                         filter=dict(date_from=date_from,
-                                                date_to=date_to,
-                                                limit=-1,
-                                                skip_no_score=False))
+                                    date_to=date_to))
         ps = PredictionService(model_storage=AzureBlobStorage(
-                                global_config.COMMON['azure_storage_name'],
-                                global_config.COMMON['azure_storage_key'],
+                                app.config['AZURE_STORAGE_NAME'],
+                                app.config['AZURE_STORAGE_KEY'],
                                 modelname),
             stat_model_factory=StatModelFactory,
             stat_model_repo=StatModelRepository(db_session))

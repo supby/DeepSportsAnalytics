@@ -3,15 +3,15 @@ import logging
 from data.source.nhlreference_source import NHLRefDataSource
 from shared.cache import DefaultCache
 from shared.redis_cache import RedisCache
+from db.data_repository import DataRepository
 
 logger = logging.getLogger(__name__)
 
 class DataSourceFactory(object):
     __ds_map = {
-        'nhlref': lambda c: NHLRefDataSource(team_stat_season=2015,
-                                     games_season=2016,
-                                     cache=RedisCache(url=c['REDIS_URL']),
-                                     fvector_len=-1)
+                'nhlref': lambda c:
+                    MongoDBDataSource(
+                            data_repo=DataRepository(uri=c['MONGO_URI']))
     }
 
     def __init__(self, config):

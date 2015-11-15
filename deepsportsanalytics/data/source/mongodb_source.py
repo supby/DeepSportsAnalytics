@@ -11,11 +11,9 @@ logger = logging.getLogger(__name__)
 
 class MongoDBDataSource(DataSourceBase):
 
-    def __init__(self, url, model_name, db_name):
-        self.__db = MongoClient(url)[db_name]
-        self.__model_name = model_name
+    def __init__(self, data_repo):
+        self.__data_repo = data_repo
 
-    def load(self, filter):
+    def load(self, model_name, filter):
         logger.info('load')
-        for row in self.__db['%s_data' % self.__model_name].find(filter):
-            yield return row
+        self.__data_repo.get(model_name, filter)

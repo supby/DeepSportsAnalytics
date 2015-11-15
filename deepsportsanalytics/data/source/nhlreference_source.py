@@ -46,7 +46,7 @@ class NHLRefDataSource(DataSourceBase):
             data = self.__cache.get(str(filter))
 
         if data == None:
-            data = (([],[]), [])
+            data = [],[],[]
             for table_selector in ['table#games tbody tr',
                                    'table#games_playoffs tbody tr']:
                 logger.info("Process table: %s" % table_selector)
@@ -54,12 +54,10 @@ class NHLRefDataSource(DataSourceBase):
                 d = self.__extract_data(
                     table_rows=pq(url=self.__BASE_URL+self.__games_url)(table_selector),
                                 base_url=self.__BASE_URL,
-                                date_from=filter['dateFrom'],
-                                date_to=filter['dateTo'],
-                                limit=filter['limit'],
-                                proccess_if_no_scores=not filter['skip_no_score'])
+                                date_from=filter['date_from'],
+                                date_to=filter['date_to'])
 
-                data = ((data[0][0]+d[0][0], data[0][1]+d[0][1]), data[1] + d[1])
+                data = data[0]+d[0], data[1]+d[1], data[2] + d[2]
 
             if self.__cache:
                 self.__cache.set(str(filter), data)
@@ -110,13 +108,10 @@ class NHLRefDataSource(DataSourceBase):
         if team1Stats and team2Stats:
             train_samples.append(self.__get_diff(team1Stats, team2Stats))
 
-    def __extract_data(self, table_rows, base_url, date_from=None,
-                       date_to=None, limit=-1, proccess_if_no_scores=True):
-        train_samples = []
-        train_Y = []
+    def __extract_data(self, table_rows, base_url, date_from=None, date_to=None):
+        X = []
+        Y = []
         metadata = []
-
-        i = 0
 
         for tr in table_rows:
             tr_obj = pq(tr)
@@ -126,39 +121,23 @@ class NHLRefDataSource(DataSourceBase):
                 continue
             if date_to != None and game_date >= date_to:
                 break
-            if i == limit and limit > 0:
-                break
-
-            i += 1
 
             team1A = tr_obj('td:eq(1) a')[0]
             team2A = tr_obj('td:eq(3) a')[0]
 
-            logger.info('%s - %s' % (team1A.text, team2A.text))
+            logger.info('%s: %s - %s' % (game_date, team1A.text, team2A.text))
 
-            if proccess_if_no_scores:
-                metadata.append((game_date, team1A.text, team2A.text))
-                logger.info('%s: %s - %s' % (game_date, team1A.text, team2A.text))
-                self.__proccess_team_stats(train_samples,
-                                           base_url + team1A.attrib['href'],
-                                           base_url + team2A.attrib['href'])
+            metadata.append([game_date, team1A.text, team2A.text])
+            self.__proccess_team_stats(X,
+                                       base_url + team1A.attrib['href'],
+                                       base_url + team2A.attrib['href'])
 
             scores1Str = tr_obj('td:eq(2)').text().strip()
             scores2Str = tr_obj('td:eq(4)').text().strip()
 
-            if scores2Str == '' or scores1Str == '':
-                continue
+            if scores1Str and scores2Str:
+                Y.append([1]) if int(scores1Str) - int(scores2Str) >= 0 else Y.append([0])
+            else:
+                Y.append([None])
 
-            if not proccess_if_no_scores:
-                metadata.append((game_date, team1A.text, team2A.text))
-                logger.info('%s: %s - %s' % (game_date, team1A.text, team2A.text))
-                self.__proccess_team_stats(train_samples,
-                                           base_url + team1A.attrib['href'],
-                                           base_url + team2A.attrib['href'])
-
-            Y = 1 if int(scores1Str) - int(scores2Str) >= 0 else 0
-            train_Y.append(Y)
-
-            logger.info('class => %s' % (Y))
-
-        return ((train_samples, train_Y), metadata)
+        return X, Y, metadata

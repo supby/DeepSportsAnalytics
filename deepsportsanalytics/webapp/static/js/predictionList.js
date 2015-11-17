@@ -2,7 +2,7 @@ var PredictionListModel = Backbone.Model.extend({
     defaults: function () {
         return {
           modelName: null,
-          dataSourceType: 'nhlref',
+          dataSourceType: 'local',
           filter: null,
           predictDateFrom: null,
           predictDateTo: null,

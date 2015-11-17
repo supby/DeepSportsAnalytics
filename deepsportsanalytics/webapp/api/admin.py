@@ -38,19 +38,21 @@ def __update_async(model_name, date_from, date_to,
                 reset_data=%s, model_status_id=%s'
                 % (model_name, date_from, date_to, reset_data, model_status_id))
 
-    us = UpdateService(DataService(data_source_factory=DataSourceFactory(app.config)),
-                       PredictionService(model_storage=AzureBlobStorage(
-                                global_config.COMMON['azure_storage_name'],
-                                global_config.COMMON['azure_storage_key'],
+    us = UpdateService(
+            DataService(data_source_factory=DataSourceFactory(app.config)),
+            PredictionService(
+                model_storage=AzureBlobStorage(
+                                app.config['AZURE_STORAGE_NAME'],
+                                app.config['AZURE_STORAGE_KEY'],
                                 model_name),
-                                stat_model_factory=StatModelFactory,
-                                stat_model_repo=StatModelRepository(db_session)),
-                        AzureBlobStorage(global_config.COMMON['azure_storage_name'],
-                                      global_config.COMMON['azure_storage_key'],
-                                      '%s-data' % model_name))
+                stat_model_factory=StatModelFactory,
+                stat_model_repo=StatModelRepository(db_session)),
+            AzureBlobStorage(
+                app.config['AZURE_STORAGE_NAME'],
+                app.config['AZURE_STORAGE_KEY'],
+                '%s-data' % model_name))
 
-    us.update(filter=dict(date_from=date_from, date_to=date_to,
-                                limit=-1, skip_no_score=True),
+    us.update(filter=dict(date_from=date_from, date_to=date_to),
               model_name=model_name,
               data_source_type=data_source_type,
               reset_data=reset_data)

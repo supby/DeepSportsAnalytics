@@ -3,13 +3,13 @@ import logging
 from data.source.nhlreference_source import NHLRefDataSource
 from shared.cache import DefaultCache
 from shared.redis_cache import RedisCache
-from db.data_repository import DataRepository
+from data.storage.data_repository import DataRepository
 
 logger = logging.getLogger(__name__)
 
 class DataSourceFactory(object):
     __ds_map = {
-                'nhlref': lambda c:
+                'local': lambda c:
                     MongoDBDataSource(
                             data_repo=DataRepository(uri=c['MONGO_URI']))
     }

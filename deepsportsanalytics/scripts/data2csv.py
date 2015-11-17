@@ -41,6 +41,7 @@ if __name__ == '__main__':
     X, Y, metadata = ds.load(dict(date_from=date_from, date_to=date_to))
 
     with open(csv_filename, 'wb') as csvfile:
-        for i in range(len(Y)):        
-            datawriter = csv.writer(csvfile)
-            datawriter.writerow(metadata[i]+X[i]+Y[i])
+        datawriter = csv.writer(csvfile)
+        datawriter.writerow(metadata[0].keys()+['x{0}'.format(i) for i in range(len(X[0]))]+['y'])
+        for i in range(len(Y)):
+            datawriter.writerow([metadata[i][k] for k in metadata[i].keys()]+X[i]+[Y[i]])

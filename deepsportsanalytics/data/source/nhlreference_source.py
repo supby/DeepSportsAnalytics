@@ -127,7 +127,9 @@ class NHLRefDataSource(DataSourceBase):
 
             logger.info('%s: %s - %s' % (game_date, team1A.text, team2A.text))
 
-            metadata.append([game_date, team1A.text, team2A.text])
+            metadata.append(dict(game_date=game_date,
+                                team1_name=team1A.text,
+                                team2_name=team2A.text))
             self.__proccess_team_stats(X,
                                        base_url + team1A.attrib['href'],
                                        base_url + team2A.attrib['href'])
@@ -136,8 +138,8 @@ class NHLRefDataSource(DataSourceBase):
             scores2Str = tr_obj('td:eq(4)').text().strip()
 
             if scores1Str and scores2Str:
-                Y.append([1]) if int(scores1Str) - int(scores2Str) >= 0 else Y.append([0])
+                Y.append(1) if int(scores1Str) - int(scores2Str) >= 0 else Y.append(0)
             else:
-                Y.append([None])
+                Y.append(None)
 
         return X, Y, metadata

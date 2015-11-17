@@ -64,3 +64,4 @@ target/
 
 # config dir
 instance/
+scripts.cfg

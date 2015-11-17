@@ -3,12 +3,12 @@ import sys
 import logging
 import logging.config
 import argparse
-import csv
+import ConfigParser
 sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 
 from data.source.nhlreference_source import NHLRefDataSource
 from utils import date_utils
-from db.data_repository import DataRepository
+from data.storage.data_repository import DataRepository
 
 root_logger = logging.getLogger()
 root_logger.setLevel(logging.INFO)
@@ -27,20 +27,27 @@ if __name__ == '__main__':
     parser.add_argument('--dt')
     parser.add_argument('--mn')
     parser.add_argument('--dst')
-    parser.add_argument('--f')
     args = parser.parse_args()
 
     date_from = date_utils.try_parse(args.df)
     date_to = date_utils.try_parse(args.dt)
     model_name = args.mn
     data_source_type = args.dst
-    csv_filename = args.f
+
+    config = ConfigParser.ConfigParser()
+    config.read('scripts.cfg')
 
     ds = NHLRefDataSource(team_stat_season=2015,
                         games_season=2016,
                         cache_team_stats=True)
     X, Y, metadata = ds.load(dict(date_from=date_from, date_to=date_to))
 
-    data_rep = DataRepository(uri='')
+    data_rep = DataRepository(uri=config.get('defaults', 'MONGO_URI'))
+    data = []
+    keys = metadata[0].keys()+['x{0}'.format(i) for i in range(len(X[0]))]+['y']
     for i in range(len(Y)):
-        data_rep.add()
+        data_row = [metadata[i][k] for k in metadata[i].keys()]+X[i]+[Y[i]]
+        doc = { keys[j]:str(data_row[j]) for j in range(len(X[i])) }
+        data.append(doc)
+
+    data_rep.add(model_name, data)

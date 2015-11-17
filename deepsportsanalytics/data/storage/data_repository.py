@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 class DataRepository(object):
 
     def __init__(self, uri):
-        self.__db = MongoClient(uri)
+        self.__db = MongoClient(uri).get_default_database()
 
     def add(self, model_name, data):
         logger.info('add: model_name = %s' % model_name)

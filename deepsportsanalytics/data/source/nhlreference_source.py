@@ -115,8 +115,7 @@ class NHLRefDataSource(DataSourceBase):
 
         for tr in table_rows:
             tr_obj = pq(tr)
-            game_date = datetime.datetime.date(parse(tr_obj('td:eq(0)')
-                                .text().strip()))
+            game_date = parse(tr_obj('td:eq(0)').text().strip())
             if date_from != None and game_date < date_from:
                 continue
             if date_to != None and game_date >= date_to:

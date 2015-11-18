@@ -17,4 +17,7 @@ class MongoDBDataSource(DataSourceBase):
 
     def load(self, filter):
         logger.info('load')
-        self.__data_repo.get(self.__source_name, filter)
+        return self.__data_repo.get(
+                    self.__source_name,
+                    {"game_date": {"$ge": filter['date_from']},
+                    "game_date": {"$lt": filter['date_to']}})

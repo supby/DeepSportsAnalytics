@@ -10,9 +10,11 @@ logger = logging.getLogger(__name__)
 
 class DataSourceFactory(object):
     __ds_map = {
-                'local': lambda c:
+                'nhlref_2105_2106_local': lambda c:
                     MongoDBDataSource(
-                            data_repo=DataRepository(uri=c['MONGO_URI']))
+                            data_repo=DataRepository(
+					uri=c['MONGO_URI'],
+					source_name='nhlref_2105_2106'))
     }
 
     def __init__(self, config):

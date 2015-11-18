@@ -25,14 +25,12 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--df')
     parser.add_argument('--dt')
-    parser.add_argument('--mn')
-    parser.add_argument('--dst')
+    parser.add_argument('--sn')    
     args = parser.parse_args()
 
     date_from = date_utils.try_parse(args.df)
     date_to = date_utils.try_parse(args.dt)
-    model_name = args.mn
-    data_source_type = args.dst
+    source_name = args.sn    
 
     config = ConfigParser.ConfigParser()
     config.read('scripts.cfg')
@@ -50,4 +48,4 @@ if __name__ == '__main__':
         doc = { keys[j]:str(data_row[j]) if data_row[j] != None else '' for j in range(len(keys)) }
         data.append(doc)
 
-    data_rep.add(model_name, data)
+    data_rep.add(source_name, data)

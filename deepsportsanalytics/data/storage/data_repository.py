@@ -9,10 +9,10 @@ class DataRepository(object):
     def __init__(self, uri):
         self.__db = MongoClient(uri).get_default_database()
 
-    def add(self, model_name, data):
-        logger.info('add: model_name = %s' % model_name)
-        self.__db['%s_data' % model_name].insert_many(data)
+    def add(self, collection_name, data):
+        logger.info('add: collection_name = %s' % model_name)
+        self.__db[collection_name].insert_many(data)
 
-    def get(self, model_name, filter):
-        logger.info('get: model_name = %s' % model_name)
-        return self.__db['%s_data' % model_name].find(filter)
+    def get(self, collection_name, filter):
+        logger.info('get: collection_name = %s' % model_name)
+        return self.__db[collection_name].find(filter)

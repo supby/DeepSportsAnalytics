@@ -16,6 +16,7 @@ $(function () {
                         modelName: 'model',
                         predictDateFrom: moment().add(1, 'days'),
                         predictDateTo: moment().add(2, 'days'),
+                        dataSource: 'nhlref_2105_2106_local'
                       })
             }).render().el);
 
@@ -24,6 +25,7 @@ $(function () {
                           modelName: 'model-ns',
                           predictDateFrom: moment().add(1, 'days'),
                           predictDateTo: moment().add(2, 'days'),
+                          dataSource: 'nhlref_2105_2106_local'
                         })
               }).render().el);
           return this;

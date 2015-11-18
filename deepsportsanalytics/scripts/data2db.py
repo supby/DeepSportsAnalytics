@@ -25,12 +25,12 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--df')
     parser.add_argument('--dt')
-    parser.add_argument('--sn')    
+    parser.add_argument('--sn')
     args = parser.parse_args()
 
     date_from = date_utils.try_parse(args.df)
     date_to = date_utils.try_parse(args.dt)
-    source_name = args.sn    
+    source_name = args.sn
 
     config = ConfigParser.ConfigParser()
     config.read('scripts.cfg')
@@ -45,7 +45,7 @@ if __name__ == '__main__':
     keys = metadata[0].keys()+['x{0}'.format(i) for i in range(len(X[0]))]+['y']
     for i in range(len(Y)):
         data_row = [metadata[i][k] for k in metadata[i].keys()]+X[i]+[Y[i]]
-        doc = { keys[j]:str(data_row[j]) if data_row[j] != None else '' for j in range(len(keys)) }
+        doc = { keys[j]:data_row[j] if data_row[j] != None else '' for j in range(len(keys)) }
         data.append(doc)
 
     data_rep.add(source_name, data)

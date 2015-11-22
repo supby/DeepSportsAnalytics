@@ -15,4 +15,6 @@ class DataRepository(object):
 
     def get(self, collection_name, filter):
         logger.info('get: collection_name = %s' % collection_name)
-        return self.__db[collection_name].find(filter)
+
+        for r in self.__db[collection_name].find(filter):
+            yield r

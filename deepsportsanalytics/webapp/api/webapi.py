@@ -37,10 +37,10 @@ def predict(modelname, datasourcetype, datefrom, dateto):
 
     try:
         ds = DataService(data_source_factory=DataSourceFactory(app.config))
-        data_to_predict, data_to_predict_m = \
+        X, Y, metadata = \
             ds.get_data(
                 data_source_type=datasourcetype,
-                filter=dict(date_from=date_from, date_to=date_to))
+                filter={"game_date": {"$gte": date_from, "$lt": date_to}})
         ps = PredictionService(
                 model_storage=AzureBlobStorage(
                                 app.config['AZURE_STORAGE_NAME'],
@@ -48,7 +48,7 @@ def predict(modelname, datasourcetype, datefrom, dateto):
                                 modelname),
                 stat_model_factory=StatModelFactory,
                 stat_model_repo=StatModelRepository(db_session))
-        predictions = ps.predict(X=data_to_predict[0], model_name=modelname)
+        predictions = ps.predict(X=X, model_name=modelname)
 
         if not data_to_predict:
             return jsonify(data=None)
@@ -57,7 +57,7 @@ def predict(modelname, datasourcetype, datefrom, dateto):
                    'team1Name': pd[1][1],
                    'team2Name': pd[1][2],
                    'winProba': pd[0][1] * 100}
-                   for pd in zip(predictions, data_to_predict_m)])
+                   for pd in zip(predictions, metadata)])
     except:
         logger.error("%s: Unexpected error: %s" % (__name__, sys.exc_info()))
         raise InternalServerError

@@ -42,10 +42,14 @@ if __name__ == '__main__':
 
     data_rep = DataRepository(uri=config.get('defaults', 'MONGO_URI'))
     data = []
-    keys = metadata[0].keys()+['x{0}'.format(i) for i in range(len(X[0]))]+['y']
+    meta_keys = metadata[0].keys()
     for i in range(len(Y)):
-        data_row = [metadata[i][k] for k in metadata[i].keys()]+X[i]+[Y[i]]
-        doc = { keys[j]:data_row[j] if data_row[j] != None else '' for j in range(len(keys)) }
+        meta_data_row = [metadata[i][k] for k in metadata[i].keys()]
+        doc = {
+            'X': X[i],
+            'Y': [Y[i]],
+            'meta': { meta_keys[j]:meta_data_row[j] for j in range(len(meta_keys)) }
+        }
         data.append(doc)
 
     data_rep.add(source_name, data)

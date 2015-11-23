@@ -11,4 +11,12 @@ class DataService(object):
         logger.info('get_data, data_source_type = %s' % data_source_type)
 
         data_source = self.__data_source_factory.create(data_source_type)
-        return data_source.load(filter=filter)
+        X = []
+        Y = []
+        meta = []        
+        for row in data_source.load(filter=filter):
+            X.append(row['X'])
+            Y.append(row['Y'])
+            meta.append(row['meta'])
+
+        return X, Y, meta

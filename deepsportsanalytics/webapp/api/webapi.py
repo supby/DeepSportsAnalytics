@@ -50,12 +50,12 @@ def predict(modelname, datasourcetype, datefrom, dateto):
                 stat_model_repo=StatModelRepository(db_session))
         predictions = ps.predict(X=X, model_name=modelname)
 
-        if not data_to_predict:
+        if not X:
             return jsonify(data=None)
 
-        return jsonify(data=[{'gameDate': str(pd[1][0]),
-                   'team1Name': pd[1][1],
-                   'team2Name': pd[1][2],
+        return jsonify(data=[{'gameDate': str(pd[1]['game_date']),
+                   'team1Name': pd[1]['team1_name'],
+                   'team2Name': pd[1]['team2_name'],
                    'winProba': pd[0][1] * 100}
                    for pd in zip(predictions, metadata)])
     except:

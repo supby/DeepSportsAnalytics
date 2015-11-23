@@ -17,4 +17,6 @@ class MongoDBDataSource(DataSourceBase):
 
     def load(self, filter):
         logger.info('load')
-        return self.__data_repo.get(self.__source_name, filter)
+
+        f = {'meta.{0}'.format(k): filter[k] for k in filter.keys()}
+        return self.__data_repo.get(self.__source_name, f)

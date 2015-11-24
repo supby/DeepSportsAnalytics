@@ -41,6 +41,10 @@ def predict(modelname, datasourcetype, datefrom, dateto):
             ds.get_data(
                 data_source_type=datasourcetype,
                 filter={"game_date": {"$gte": date_from, "$lt": date_to}})
+
+        if not X:
+            return jsonify(data=None)
+
         ps = PredictionService(
                 model_storage=AzureBlobStorage(
                                 app.config['AZURE_STORAGE_NAME'],
@@ -49,9 +53,6 @@ def predict(modelname, datasourcetype, datefrom, dateto):
                 stat_model_factory=StatModelFactory,
                 stat_model_repo=StatModelRepository(db_session))
         predictions = ps.predict(X=X, model_name=modelname)
-
-        if not X:
-            return jsonify(data=None)
 
         return jsonify(data=[{'gameDate': str(pd[1]['game_date']),
                    'team1Name': pd[1]['team1_name'],

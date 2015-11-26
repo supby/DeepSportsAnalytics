@@ -15,6 +15,11 @@ class DataRepository(object):
 
     def get(self, collection_name, filter):
         logger.info('get: collection_name = %s' % collection_name)
-        
+
         for r in self.__db[collection_name].find(filter):
             yield r
+
+    def update(self, collection_name, filter, data):
+        logger.info('update: collection_name = %s' % collection_name)
+
+        self.__db[collection_name].update_many(filter, { "$set": data })

@@ -13,14 +13,6 @@ class StatModelRepository(object):
     def __init__(self, db_session):
         self.__db_session = db_session
 
-    def get_type_by_name(self, model_name):
-        logger.info('get_type_by_name: model_name = %s' % model_name)
-
-        return StatModelType.query\
-                        .join(StatModel)\
-                        .filter(StatModel.name == model_name)\
-                        .first().name
-
     def create_history_rec(self, model_name):
         logger.info('create history record: model_name = %s' % model_name)
 

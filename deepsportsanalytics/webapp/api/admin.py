@@ -23,7 +23,6 @@ from db.repository import StatModelRepository
 from db import get_db_session_scope
 from services.data_service import DataService
 from services.prediction_service import PredictionService
-from services.update_service import UpdateService
 from data.source.data_source_factory import DataSourceFactory
 from statmodel.model_factory import StatModelFactory
 
@@ -37,29 +36,6 @@ def __update_async(model_name, date_from, date_to,
     logger.info('update_async: model_name=%s, date_from=%s, date_to=%s, \
                 reset_data=%s, model_status_id=%s'
                 % (model_name, date_from, date_to, reset_data, model_status_id))
-
-    us = UpdateService(
-            DataService(data_source_factory=DataSourceFactory(app.config)),
-            PredictionService(
-                model_storage=AzureBlobStorage(
-                                app.config['AZURE_STORAGE_NAME'],
-                                app.config['AZURE_STORAGE_KEY'],
-                                model_name),
-                stat_model_factory=StatModelFactory,
-                stat_model_repo=StatModelRepository(db_session)),
-            AzureBlobStorage(
-                app.config['AZURE_STORAGE_NAME'],
-                app.config['AZURE_STORAGE_KEY'],
-                '%s-data' % model_name))
-
-    us.update(filter=dict(date_from=date_from, date_to=date_to),
-              model_name=model_name,
-              data_source_type=data_source_type,
-              reset_data=reset_data)
-
-    with get_db_session_scope() as s:
-        StatModelRepository(s)\
-            .update_history_status(2, model_name, model_status_id)
 
 
 @webapi_admin.route('/api/v1.0/updatemodel/<modelname>/<datasourcetype>/<datefrom>/<dateto>/<resetdata>', methods=['GET'])

@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 class StatModelFactory(object):
     __models_map = {
-        'scikitmodel': lambda: ScikitModel(model=LogisticRegression(penalty='l2', C=0.7)),
+        'scikitmodel_lr': lambda: ScikitModel(model=LogisticRegression(penalty='l2', C=0.7)),
         # 'dnn': lambda: DNNModel()
     }
 

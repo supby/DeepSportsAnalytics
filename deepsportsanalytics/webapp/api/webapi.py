@@ -49,9 +49,7 @@ def predict(modelname, datasourcetype, datefrom, dateto):
                 model_storage=AzureBlobStorage(
                                 app.config['AZURE_STORAGE_NAME'],
                                 app.config['AZURE_STORAGE_KEY'],
-                                modelname),
-                stat_model_factory=StatModelFactory,
-                stat_model_repo=StatModelRepository(db_session))
+                                'deepsportmodels'))
         predictions = ps.predict(X=X, model_name=modelname)
 
         return jsonify(data=[{'gameDate': str(pd[1]['game_date']),

@@ -13,21 +13,12 @@ $(function () {
         render: function () {
           this.$('#predictions-container').append(
             new PredictionListView({ model: new PredictionListModel({
-                        modelName: 'model',
+                        modelName: 'model-lr',
                         predictDateFrom: moment().add(1, 'days'),
                         predictDateTo: moment().add(2, 'days'),
                         dataSource: 'nhlref_2015_2016_local'
                       })
             }).render().el);
-
-            this.$('#predictions-container2').append(
-              new PredictionListView({ model: new PredictionListModel({
-                          modelName: 'model-ns',
-                          predictDateFrom: moment().add(1, 'days'),
-                          predictDateTo: moment().add(2, 'days'),
-                          dataSource: 'nhlref_2015_2016_local'
-                        })
-              }).render().el);
           return this;
         },
     });

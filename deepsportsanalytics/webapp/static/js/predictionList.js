@@ -47,23 +47,21 @@ var PredictionListView = Backbone.View.extend({
       this.setLoading(false);
     },
     setNoData: function(set) {
+      var noDataRow = this.$('.pred-tbl-no-data-row');
       if(set)
-        this.$('.pred-tbl-no-data-row').show();
+        noDataRow.show();
       else
-        this.$('.pred-tbl-no-data-row').hide();
+        noDataRow.hide();
     },
     setLoading: function(set) {
+      var loadingRow = this.$('.pred-tbl-loading-row');
       if(set)
-        this.$('.pred-tbl-loading-row').show();
+        loadingRow.show();
       else
-        this.$('.pred-tbl-loading-row').hide();
+        loadingRow.hide();
     },
     render: function () {
       this.$el.html(_.template($('#predictions-template').text())(this.model.toJSON()));
-      this.$el.append(
-        new StatModelStateView({
-          model: new StatModelStateModel({ id: this.model.get('modelName') })
-        }).render().el)
       this.$('.predict-game-datepicker')
           .text(this.model.get('predictDateFrom').format("YYYY-MM-DD"))
           .fdatepicker()

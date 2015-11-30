@@ -14,9 +14,7 @@ root_logger = logging.getLogger()
 root_logger.setLevel(logging.INFO)
 ch = logging.StreamHandler()
 ch.setLevel(logging.INFO)
-formatter = logging.Formatter('[%(asctime)s] [%(process)d:%(thread)d] \
-                                [%(levelname)s] [%(module)s] [%(funcName)s] \
-                                %(message)s')
+formatter = logging.Formatter('[%(asctime)s] [%(process)d:%(thread)d] [%(levelname)s] [%(module)s] [%(funcName)s] %(message)s')
 ch.setFormatter(formatter)
 root_logger.addHandler(ch)
 
@@ -46,10 +44,10 @@ if __name__ == '__main__':
     for i in range(len(Y)):
         if not Y[i]:
             continue
-
         meta_data_row = [metadata[i][k] for k in metadata[i].keys()]
-        data_rep.update(
+        res = data_rep.update(
             source_name,
             { 'meta.{0}'.format(meta_keys[j]):meta_data_row[j] for j in range(len(meta_keys)) },
             { 'Y': [Y[i]] }
         )
+	root_logger.info(res)

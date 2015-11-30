@@ -52,7 +52,7 @@ def predict(modelname, datasourcetype, datefrom, dateto):
                                 'deepsportmodels'))
         predictions = ps.predict(X=X, model_name=modelname)
 
-        return jsonify(data=[{'gameDate': str(pd[1]['game_date']),
+        return jsonify(data=[{'gameDate': str(pd[1]['game_date'].date()),
                    'team1Name': pd[1]['team1_name'],
                    'team2Name': pd[1]['team2_name'],
                    'winProba': pd[0][1] * 100}

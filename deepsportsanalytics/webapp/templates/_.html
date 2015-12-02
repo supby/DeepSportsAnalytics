@@ -27,18 +27,13 @@ and open the template in the editor.
         {% block head %}{% endblock %}
     </head>
     <body>
-      <nav class="top-bar" data-topbar>
-       <ul class="title-area">
-         <li class="name">
-           <h1>
-             <a href="#">
-               Deep Sport Analitycs
-             </a>
-           </h1>
-         </li>
-         <li class="toggle-topbar menu-icon"><a href="#"><span>Menu</span></a></li>
-       </ul>
-      </nav>
+      <div class="top-bar">
+        <div class="top-bar-left">
+          <ul class="menu">
+            <li class="menu-text">Deep Sport Analitycs</li>
+          </ul>
+        </div>
+      </div>
 
       <div id="content">{% block content %}{% endblock %}</div>
 

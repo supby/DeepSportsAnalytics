@@ -4,7 +4,6 @@ from datetime import datetime
 from sqlalchemy import asc, desc
 
 from db.models import StatModel
-from db.models import StatModelType
 from db.models import UpdateStatModelHistory
 
 logger = logging.getLogger(__name__)

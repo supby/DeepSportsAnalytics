@@ -34,7 +34,7 @@ __config = {
 
 def configure_app(app, env):
     app.config.from_object(__config.get(env, __DEF_CONFIG))
-    app.config.from_pyfile('config.ini', silent=True)
+    app.config.from_pyfile('webapp.cfg', silent=True)
 
     # setup logginig
     root_logger = logging.getLogger()

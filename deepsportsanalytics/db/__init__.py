@@ -43,28 +43,13 @@ def populate():
     from db.models import *
     session = db_session()
     # fill models types
-    if session.query(StatModelType).filter(StatModelType.name=='scikitmodel').count() == 0:
-        session.add(StatModelType('scikitmodel'))
+    if session.query(StatModelType).filter(StatModelType.name=='scikit_lr').count() == 0:
+        session.add(StatModelType('scikit_lr'))
         session.commit()
-    if session.query(StatModelType).filter(StatModelType.name=='dnnmodel').count() == 0:
-        session.add(StatModelType('dnn'))
-        session.commit()
+
     # fill stat models
-    scmodel_type = session.query(StatModelType).filter(StatModelType.name=='scikitmodel').first()
-    dnn_type = session.query(StatModelType).filter(StatModelType.name=='dnn').first()
-    if session.query(StatModel).filter(StatModel.name=='model',
+    scmodel_type = session.query(StatModelType).filter(StatModelType.name=='scikit_lr').first()
+    if session.query(StatModel).filter(StatModel.name=='model-lr',
                                        StatModel.model_type==scmodel_type.id).count() == 0:
-        session.add(StatModel('model', scmodel_type.id))
-        session.commit()
-    if session.query(StatModel).filter(StatModel.name=='model-ns',
-                                       StatModel.model_type==scmodel_type.id).count() == 0:
-        session.add(StatModel('model-ns', scmodel_type.id))
-        session.commit()
-    if session.query(StatModel).filter(StatModel.name=='model-tmp',
-                                       StatModel.model_type==scmodel_type.id).count() == 0:
-        session.add(StatModel('model-tmp', scmodel_type.id))
-        session.commit()
-    if session.query(StatModel).filter(StatModel.name=='dnn_model',
-                                       StatModel.model_type==dnn_type.id).count() == 0:
-        session.add(StatModel('model-dnn', dnn_type.id))
+        session.add(StatModel('model-lr', scmodel_type.id))
         session.commit()

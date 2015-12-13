@@ -16,7 +16,7 @@ $(function () {
                         modelName: 'model-lr',
                         predictDateFrom: moment().add(1, 'days'),
                         predictDateTo: moment().add(2, 'days'),
-                        dataSource: 'nhlref_2015_2016_local'
+                        dataSource: 'nhlref_2015_2016'
                       })
             }).render().el);
           return this;

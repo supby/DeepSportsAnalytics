@@ -9,7 +9,6 @@ from flask import Flask, request, redirect, url_for
 from flask import render_template
 
 from api.webapi import webapi
-from api.admin import webapi_admin
 from db import init_db
 from db import db_session
 from config import configure_app
@@ -25,7 +24,6 @@ def create_app(env):
     configure_app(app, env)
     # setup Blueprint
     app.register_blueprint(webapi)
-    app.register_blueprint(webapi_admin)
     init_db()
 
     return app

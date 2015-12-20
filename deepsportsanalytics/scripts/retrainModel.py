@@ -28,13 +28,15 @@ if __name__ == '__main__':
     parser.add_argument('--sn')
     parser.add_argument('--mn')
     parser.add_argument('--mt')
+    parser.add_argument('--cf')
     args = parser.parse_args()
     source_name = args.sn
     model_name = args.mn
     model_type = args.mt
+    config_path = args.cf
 
     config = ConfigParser.ConfigParser()
-    config.read('scripts.cfg')
+    config.read(config_path)
 
     root_logger.info('Get train data.')
 

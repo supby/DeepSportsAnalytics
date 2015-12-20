@@ -24,7 +24,7 @@ def create_app(env):
     configure_app(app, env)
     # setup Blueprint
     app.register_blueprint(webapi)
-    init_db()
+    # init_db()
 
     return app
 

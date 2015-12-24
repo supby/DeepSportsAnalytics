@@ -26,8 +26,14 @@ var PredictionList = Backbone.Collection.extend({
 var PredictionView = Backbone.View.extend({
     tagName: 'tr',
     render: function () {
-      this.$el.attr('prediction', this.model.get('winProba'));
+      var winProba = this.model.get('winProba');
+
+      this.$el.attr('prediction', winProba);
       this.$el.html(_.template($('#prediction-template').text())(this.model.toJSON()));
+
+      if(winProba < 30 || winProba > 70)
+        this.$el.addClass('dsa-color-success');
+
       return this;
     }
 });

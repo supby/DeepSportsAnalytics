@@ -13,11 +13,11 @@ class DataSourceFactory(object):
                 'nhlref_2015_2016': lambda c:
                     MongoDBDataSource(
                         data_repo=DataRepository(uri=c['MONGO_URI']),
-					    source_name='nhlref_2015_2016'),
+					    collection_name='nhlref_2015_2016'),
                 'nhlref_all': lambda c:
                     MongoDBDataSource(
                         data_repo=DataRepository(uri=c['MONGO_URI']),
-					    source_name='nhlref_all')
+					    collection_name='nhlref_all')
     }
 
     def __init__(self, config):

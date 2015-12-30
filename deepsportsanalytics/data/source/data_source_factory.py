@@ -17,7 +17,8 @@ class DataSourceFactory(object):
                 'nhlref_all': lambda c:
                     MongoDBDataSource(
                         data_repo=DataRepository(uri=c['MONGO_URI']),
-					    collection_name='nhlref_all')
+					    collection_name='nhlref_all',
+                        cache=RedisCache(url=c['REDIS_URL']))
     }
 
     def __init__(self, config):

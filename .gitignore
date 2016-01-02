@@ -67,5 +67,5 @@ instance/
 scripts.cfg
 
 # webassets
-static/gen/
+gen/
 .webassets-cache/

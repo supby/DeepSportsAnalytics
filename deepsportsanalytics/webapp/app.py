@@ -13,6 +13,7 @@ from db import init_db
 from db import db_session
 from config import configure_app
 from utils import get_instance_folder_path
+from bundle_config import configure_bundle
 
 ALLOWED_EXTENSIONS = set(['csv'])
 
@@ -25,6 +26,7 @@ def create_app(env):
     # setup Blueprint
     app.register_blueprint(webapi)
     # init_db()
+    configure_bundle(app)
 
     return app
 

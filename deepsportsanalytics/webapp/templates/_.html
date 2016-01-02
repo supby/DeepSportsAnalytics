@@ -14,20 +14,10 @@ and open the template in the editor.
 
         <title>{% block title %}{% endblock %} - Sport Results Predictions</title>
 
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/libs/foundation.min.css') }}">
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/libs/foundation-datepicker.min.css') }}">
-        <!-- third-party libs -->
-        <script src="{{ url_for('static', filename='js/libs/jquery-1.11.3.min.js') }}"></script>
-        <script src="{{ url_for('static', filename='js/libs/underscore-min.js') }}"></script>
-        <script src="{{ url_for('static', filename='js/libs/backbone-min.js') }}"></script>
-        <script src="{{ url_for('static', filename='js/libs/foundation.min.js') }}"></script>
-        <script src="{{ url_for('static', filename='js/libs/foundation-datepicker.min.js') }}"></script>
-        <script src="{{ url_for('static', filename='js/libs/moment-with-locales.min.js') }}"></script>
-        <!-- application scripts -->
-        <script src="{{ url_for('static', filename='js/prediction.js') }}"></script>
-        <script src="{{ url_for('static', filename='js/predictionList.js') }}"></script>
-        <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+        {% assets "css_all" %}
+            <link rel="stylesheet" type="text/css" href="{{ ASSET_URL }}"></script>
+        {% endassets %}
+
         {% block head %}{% endblock %}
     </head>
     <body>
@@ -51,6 +41,9 @@ and open the template in the editor.
          </div>
        </div>
       </footer>
+      {% assets "js_all" %}
+            <script type="text/javascript" src="{{ ASSET_URL }}"></script>
+      {% endassets %}
       <script>
         $(document).foundation();
       </script>

@@ -1,0 +1,18 @@
+{
+  "name": "webapp",
+  "homepage": "https://github.com/supby/DeepSportsAnalytics",
+  "authors": [
+    "Andrej <supius@gmail.com>"
+  ],
+  "description": "Sports Analytics",
+  "main": "",
+  "moduleType": [],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

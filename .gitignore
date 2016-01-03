@@ -69,3 +69,4 @@ scripts.cfg
 # webassets
 gen/
 .webassets-cache/
+webassets-external/

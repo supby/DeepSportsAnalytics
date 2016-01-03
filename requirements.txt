@@ -7,10 +7,12 @@ Theano==0.7.0
 Werkzeug==0.9.6
 argparse==1.2.1
 azure==0.9.0
+cssmin==0.2.0
 cssselect==0.9.1
 enum34==1.1.2
 gunicorn==19.1.1
 itsdangerous==0.24
+jsmin==2.2.0
 lxml==3.4.1
 numpy==1.9.0
 pathlib==1.0.1

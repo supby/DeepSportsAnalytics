@@ -11,15 +11,14 @@ def configure_bundle(app):
             'foundation-sites/dist/foundation.min.js',
             'js/libs/foundation-datepicker.min.js',
             'js/libs/moment-with-locales.min.js',
-            Bundle('js/*.js', filters='jsmin'),
-            output='gen/all.js'),
+            'js/*.js',
+            output='gen/all.js',
+            filters='jsmin'),
         'css_all': Bundle(
             'css/libs/*.css',
-            Bundle('css/*.css', filters='cssmin'),
-            Bundle(
-                'foundation-sites/scss/foundation.scss',
-                filters='pyscss, cssmin'
-            ),
+            'css/*.css',
+            Bundle('foundation-sites/assets/foundation.scss', filters='pyscss', depends='**/*.scss'),
+            filters='cssmin',
             output='gen/all.css')
     }
 

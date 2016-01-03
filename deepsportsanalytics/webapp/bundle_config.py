@@ -5,15 +5,16 @@ from flask.ext.assets import Environment, Bundle
 def configure_bundle(app):
     bundles = {
         'js_all': Bundle(
-            'js/libs/jquery-1.11.3.min.js',
+            'jquery/dist/jquery.min.js',
             'js/libs/underscore-min.js',
             'js/libs/backbone-min.js',
-            'js/libs/foundation.min.js',
+            'foundation-sites/dist/foundation.min.js',
             'js/libs/foundation-datepicker.min.js',
             'js/libs/moment-with-locales.min.js',
             'js/*.js',
             output='gen/all.js'),
         'css_all': Bundle(
+            'foundation-sites/dist/foundation.min.css',
             'css/libs/*.css',
             'css/*.css',
             output='gen/all.css')

@@ -14,9 +14,12 @@ def configure_bundle(app):
             'js/*.js',
             output='gen/all.js'),
         'css_all': Bundle(
-            'foundation-sites/dist/foundation.min.css',
             'css/libs/*.css',
             'css/*.css',
+            Bundle(
+                'foundation-sites/scss/foundation.scss',
+                filters='pyscss'
+            ),
             output='gen/all.css')
     }
 

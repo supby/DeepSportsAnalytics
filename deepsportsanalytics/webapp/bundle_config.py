@@ -17,7 +17,9 @@ def configure_bundle(app):
         'css_all': Bundle(
             'css/libs/*.css',
             'css/*.css',
-            Bundle('foundation-sites/assets/foundation.scss', filters='pyscss', depends='**/*.scss'),
+            Bundle('main.scss',
+                    filters='scss',
+                    depends='**/*.scss'),
             filters='cssmin',
             output='gen/all.css')
     }

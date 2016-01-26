@@ -6,7 +6,7 @@ import argparse
 import csv
 sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 
-from data.source.nhlreference_source import NHLRefDataSource
+from data.source.nhlreference_source import SportReferenceDataSource
 from utils import date_utils
 
 root_logger = logging.getLogger()
@@ -35,8 +35,11 @@ if __name__ == '__main__':
     data_source_type = args.dst
     csv_filename = args.f
 
-    ds = NHLRefDataSource(team_stat_season=2015,
-                        games_season=2016,
+    ds = SportReferenceDataSource(
+                        base_url='http://www.hockey-reference.com',
+                        team_stat_season=season[0],
+                        games_season=season[1],
+                        game_type='NHL',
                         cache_team_stats=True)
     X, Y, metadata = ds.load(dict(date_from=date_from, date_to=date_to))
 

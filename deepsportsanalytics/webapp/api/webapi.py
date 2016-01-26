@@ -11,7 +11,6 @@ from flask import current_app as app
 
 from data.storage.azure_storage import AzureBlobStorage
 from shared.cache import DefaultCache
-from data.source.nhlreference_source import NHLRefDataSource
 from data.source.data_source_factory import DataSourceFactory
 from services.data_service import DataService
 from services.prediction_service import PredictionService

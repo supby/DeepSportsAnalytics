@@ -14,26 +14,26 @@ from source_base import DataSourceBase
 
 logger = logging.getLogger(__name__)
 
-class NHLRefDataSource(DataSourceBase):
+class SportReferenceDataSource(DataSourceBase):
     """
-    inplement data source for nhl-reference site
+    inplement data source for sport-reference site
     """
 
-    __GAMES_URL_FORMAT = '/leagues/NHL_{0}_games.html'
+    __GAMES_URL_FORMAT = '/leagues/{0}_{1}_games.html'
     __TEAM_STAT_URL_FORMAT = '/teams/{0}/{1}.html'
-    __BASE_URL = 'http://www.hockey-reference.com'
 
-    def __init__(self, team_stat_season, games_season, cache=None,
-                 fvector_len=None, cache_team_stats=False):
+    def __init__(self, base_url, team_stat_season, games_season, game_type,
+                cache=None, fvector_len=None, cache_team_stats=False):
 
         self.__cache = cache
         self.__fvector_len = fvector_len
         self.__cache_team_stats = cache_team_stats
 
+        self.__base_url = base_url
         self.__team_stat_season = team_stat_season
         self.__games_season = games_season
 
-        self.__games_url = self.__GAMES_URL_FORMAT.format(games_season)
+        self.__games_url = self.__GAMES_URL_FORMAT.format(game_type, games_season)
 
         if self.__cache_team_stats:
             self.__team_stat_cache = {}
@@ -52,8 +52,8 @@ class NHLRefDataSource(DataSourceBase):
                 logger.info("Process table: %s" % table_selector)
 
                 d = self.__extract_data(
-                    table_rows=pq(url=self.__BASE_URL+self.__games_url)(table_selector),
-                                base_url=self.__BASE_URL,
+                    table_rows=pq(url=self.__base_url+self.__games_url)(table_selector),
+                                base_url=self.__base_url,
                                 date_from=filter['date_from'],
                                 date_to=filter['date_to'])
 
@@ -102,8 +102,8 @@ class NHLRefDataSource(DataSourceBase):
                         .format(self.__get_team_code(urlparse(team2Link).path),
                         self.__team_stat_season)
 
-        team1Stats = self.__extract_stats(self.__BASE_URL + team1url)
-        team2Stats = self.__extract_stats(self.__BASE_URL + team2url)
+        team1Stats = self.__extract_stats(self.__base_url + team1url)
+        team2Stats = self.__extract_stats(self.__base_url + team2url)
 
         if team1Stats and team2Stats:
             train_samples.append(self.__get_diff(team1Stats, team2Stats))

@@ -1,6 +1,5 @@
 import logging
 
-from data.source.nhlreference_source import NHLRefDataSource
 from shared.cache import DefaultCache
 from shared.redis_cache import RedisCache
 from data.storage.data_repository import DataRepository
@@ -9,11 +8,7 @@ from data.source.mongodb_source import MongoDBDataSource
 logger = logging.getLogger(__name__)
 
 class DataSourceFactory(object):
-    __ds_map = {
-                'nhlref_2015_2016': lambda c:
-                    MongoDBDataSource(
-                        data_repo=DataRepository(uri=c['MONGO_URI']),
-					    collection_name='nhlref_2015_2016'),
+    __ds_map = {                
                 'nhlref_all': lambda c:
                     MongoDBDataSource(
                         data_repo=DataRepository(uri=c['MONGO_URI']),

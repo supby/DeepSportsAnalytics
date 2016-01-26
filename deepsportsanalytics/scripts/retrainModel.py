@@ -6,7 +6,6 @@ import argparse
 import ConfigParser
 sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 
-from data.source.nhlreference_source import NHLRefDataSource
 from utils import date_utils
 from data.storage.data_repository import DataRepository
 from statmodel.model_factory import StatModelFactory

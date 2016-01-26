@@ -6,7 +6,7 @@ import argparse
 import ConfigParser
 sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 
-from data.source.nhlreference_source import NHLRefDataSource
+from data.source.sport_reference_source import SportReferenceDataSource
 from utils import date_utils
 from data.storage.data_repository import DataRepository
 
@@ -33,8 +33,11 @@ if __name__ == '__main__':
     config = ConfigParser.ConfigParser()
     config.read('scripts.cfg')
 
-    ds = NHLRefDataSource(team_stat_season=2015,
+    ds = SportReferenceDataSource(
+                        base_url='http://www.hockey-reference.com',
+                        team_stat_season=2015,
                         games_season=2016,
+                        game_type='NHL',
                         cache_team_stats=True)
     X, Y, metadata = ds.load(dict(date_from=date_from, date_to=date_to))
 

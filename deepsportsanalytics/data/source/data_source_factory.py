@@ -8,11 +8,16 @@ from data.source.mongodb_source import MongoDBDataSource
 logger = logging.getLogger(__name__)
 
 class DataSourceFactory(object):
-    __ds_map = {                
+    __ds_map = {
                 'nhlref_all': lambda c:
                     MongoDBDataSource(
                         data_repo=DataRepository(uri=c['MONGO_URI']),
 					    collection_name='nhlref_all',
+                        cache=RedisCache(url=c['REDIS_URL'])),
+                'nbaref_all': lambda c:
+                    MongoDBDataSource(
+                        data_repo=DataRepository(uri=c['MONGO_URI']),
+					    collection_name='nbaref_all',
                         cache=RedisCache(url=c['REDIS_URL']))
     }
 

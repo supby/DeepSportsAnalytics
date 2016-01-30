@@ -27,12 +27,16 @@ if __name__ == '__main__':
     parser.add_argument('--dt')
     parser.add_argument('--sn')
     parser.add_argument('--cf')
+    parser.add_argument('--st')
+    parser.add_argument('--bu')
     args = parser.parse_args()
 
     date_from = date_utils.try_parse(args.df)
     date_to = date_utils.try_parse(args.dt)
     source_name = args.sn
     config_path = args.cf
+    source_type = args.st
+    base_url = args.bu
 
     config = ConfigParser.ConfigParser()
     config.read(config_path)
@@ -47,15 +51,16 @@ if __name__ == '__main__':
         ]
 
     data_rep = DataRepository(uri=config.get('defaults', 'MONGO_URI'))
+
     for season in seasons:
         root_logger.info('stat_season: {0}, games_season: {1}'
                                                 .format(season[0], season[1]))
 
         ds = SportReferenceDataSource(
-                            base_url='http://www.hockey-reference.com',
+                            base_url=base_url,
                             team_stat_season=season[0],
                             games_season=season[1],
-                            game_type='NHL',
+                            game_type=source_type,
                             cache_team_stats=True)
         X, Y, metadata = ds.load(dict(date_from=date_from, date_to=date_to))
 

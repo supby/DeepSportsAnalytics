@@ -14,6 +14,25 @@ from source_base import DataSourceBase
 
 logger = logging.getLogger(__name__)
 
+class NHLReferenceRowParseStrategy(object):
+
+    def get_row_data(self, tr_obj):
+        return parse(tr_obj('td:eq(0)').text().strip()),\
+            tr_obj('td:eq(1) a')[0],\
+            tr_obj('td:eq(3) a')[0],\
+            tr_obj('td:eq(2)').text().strip(),\
+            tr_obj('td:eq(4)').text().strip()
+
+class NBAReferenceRowParseStrategy(object):
+
+    def get_row_data(self, tr_obj):
+        return parse(tr_obj('td:eq(0)')[0].attrib['csk'].strip()[:8]),\
+            tr_obj('td:eq(3) a')[0],\
+            tr_obj('td:eq(5) a')[0],\
+            tr_obj('td:eq(4)').text().strip(),\
+            tr_obj('td:eq(6)').text().strip()
+
+
 class SportReferenceDataSource(DataSourceBase):
     """
     inplement data source for sport-reference site
@@ -23,6 +42,7 @@ class SportReferenceDataSource(DataSourceBase):
     __TEAM_STAT_URL_FORMAT = '/teams/{0}/{1}.html'
 
     def __init__(self, base_url, team_stat_season, games_season, game_type,
+                row_parse_strategy,
                 cache=None, fvector_len=None, cache_team_stats=False):
 
         self.__cache = cache
@@ -34,6 +54,8 @@ class SportReferenceDataSource(DataSourceBase):
         self.__games_season = games_season
 
         self.__games_url = self.__GAMES_URL_FORMAT.format(game_type, games_season)
+
+        self.__row_parse_strategy = row_parse_strategy
 
         if self.__cache_team_stats:
             self.__team_stat_cache = {}
@@ -47,8 +69,8 @@ class SportReferenceDataSource(DataSourceBase):
 
         if data == None:
             data = [],[],[]
-            for table_selector in ['table#games tbody tr',
-                                   'table#games_playoffs tbody tr']:
+            for table_selector in ['table#games tbody:eq(0) tr',
+                                   'table#games_playoffs tbody:eq(0) tr']:
                 logger.info("Process table: %s" % table_selector)
 
                 d = self.__extract_data(
@@ -74,7 +96,7 @@ class SportReferenceDataSource(DataSourceBase):
 
         if not stats:
             d = pq(url=stats_url)
-            tds = d('table#team_stats tbody tr:eq(0) td')
+            tds = d('table#team_stats tbody:eq(0) tr:eq(0) td')
             for i in range(1, min(len(tds), self.__fvector_len)
                                 if self.__fvector_len > 0 else len(tds)):
                 val = float(0)
@@ -114,15 +136,13 @@ class SportReferenceDataSource(DataSourceBase):
         metadata = []
 
         for tr in table_rows:
-            tr_obj = pq(tr)
-            game_date = parse(tr_obj('td:eq(0)').text().strip())
+            game_date, team1A, team2A, score1Str, score2Str\
+                                    = self.__row_parse_strategy.get_row_data(pq(tr))
+
             if date_from != None and game_date < date_from:
                 continue
             if date_to != None and game_date >= date_to:
                 break
-
-            team1A = tr_obj('td:eq(1) a')[0]
-            team2A = tr_obj('td:eq(3) a')[0]
 
             logger.info('%s: %s - %s' % (game_date, team1A.text, team2A.text))
 
@@ -133,11 +153,8 @@ class SportReferenceDataSource(DataSourceBase):
                                        base_url + team1A.attrib['href'],
                                        base_url + team2A.attrib['href'])
 
-            scores1Str = tr_obj('td:eq(2)').text().strip()
-            scores2Str = tr_obj('td:eq(4)').text().strip()
-
-            if scores1Str and scores2Str:
-                Y.append(1) if int(scores1Str) - int(scores2Str) >= 0 else Y.append(0)
+            if score1Str and score2Str:
+                Y.append(1) if int(score1Str) - int(score2Str) >= 0 else Y.append(0)
             else:
                 Y.append(None)
 

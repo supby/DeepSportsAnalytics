@@ -24,11 +24,13 @@ if __name__ == '__main__':
     parser.add_argument('--df')
     parser.add_argument('--dt')
     parser.add_argument('--sn')
+    parser.add_argument('--st')
     args = parser.parse_args()
 
     date_from = date_utils.try_parse(args.df)
     date_to = date_utils.try_parse(args.dt)
     source_name = args.sn
+    source_type = args.st
 
     config = ConfigParser.ConfigParser()
     config.read('scripts.cfg')
@@ -37,7 +39,7 @@ if __name__ == '__main__':
                         base_url='http://www.hockey-reference.com',
                         team_stat_season=2015,
                         games_season=2016,
-                        game_type='NHL',
+                        game_type=source_type,
                         cache_team_stats=True)
     X, Y, metadata = ds.load(dict(date_from=date_from, date_to=date_to))
 

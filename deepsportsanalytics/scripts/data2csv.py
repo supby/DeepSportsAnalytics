@@ -6,7 +6,9 @@ import argparse
 import csv
 sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 
-from data.source.nhlreference_source import SportReferenceDataSource
+from data.source.sport_reference_source import SportReferenceDataSource
+from data.source.sport_reference_source import NBAReferenceRowParseStrategy
+from data.source.sport_reference_source import NHLReferenceRowParseStrategy
 from utils import date_utils
 
 root_logger = logging.getLogger()
@@ -24,22 +26,27 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--df')
     parser.add_argument('--dt')
-    parser.add_argument('--mn')
-    parser.add_argument('--dst')
+    parser.add_argument('--st')
+    parser.add_argument('--bu')
+    parser.add_argument('--tss')
+    parser.add_argument('--gs')
     parser.add_argument('--f')
     args = parser.parse_args()
 
     date_from = date_utils.try_parse(args.df)
     date_to = date_utils.try_parse(args.dt)
-    model_name = args.mn
-    data_source_type = args.dst
+    source_type = args.st
+    team_stat_season = args.tss
+    games_season = args.gs
     csv_filename = args.f
+    base_url = args.bu
 
     ds = SportReferenceDataSource(
-                        base_url='http://www.hockey-reference.com',
-                        team_stat_season=season[0],
-                        games_season=season[1],
-                        game_type='NHL',
+                        base_url=base_url,
+                        team_stat_season=team_stat_season,
+                        games_season=games_season,
+                        game_type=source_type,
+                        row_parse_strategy=NBAReferenceRowParseStrategy(),
                         cache_team_stats=True)
     X, Y, metadata = ds.load(dict(date_from=date_from, date_to=date_to))
 

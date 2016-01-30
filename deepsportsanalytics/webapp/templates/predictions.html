@@ -1,30 +1,32 @@
 <script type="text/template" id="predictions-template">
-  <table>
-    <caption>NHL 2015 - 2016 Predictions</caption>
-    <thead>
-      <tr>
-        <th>
-          <button class="predict-game-datepicker button small"
-                  data-date-format="yyyy-mm-dd">Game Date</button>
-        </th>
-        <th>Team 1 Name</th>
-        <th>Team 2 Name</th>
-        <th>Win Probability</th>
-      </tr>
-    </thead>
-    <tbody class="predictions-table-tbody">
-      <tr class="pred-tbl-no-data-row" style="display:none">
-        <td colspan="4">
-          No Data.
-        </td>
-      </tr>
-      <tr class="pred-tbl-loading-row" style="display:none">
-        <td colspan="4">
-          <div class="loading"></div>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+  <div class="callout">
+    <table>
+      <caption><%= title %></caption>
+      <thead>
+        <tr>
+          <th>
+            <button class="predict-game-datepicker button small"
+                    data-date-format="yyyy-mm-dd">Game Date</button>
+          </th>
+          <th>Team 1 Name</th>
+          <th>Team 2 Name</th>
+          <th>Win Probability</th>
+        </tr>
+      </thead>
+      <tbody class="predictions-table-tbody">
+        <tr class="pred-tbl-no-data-row" style="display:none">
+          <td colspan="4">
+            No Data.
+          </td>
+        </tr>
+        <tr class="pred-tbl-loading-row" style="display:none">
+          <td colspan="4">
+            <div class="loading"></div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </script>
 
 <script type="text/template" id="prediction-template">

@@ -24,12 +24,12 @@ root_logger.addHandler(ch)
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('--sn')
+    parser.add_argument('--cn')
     parser.add_argument('--mn')
     parser.add_argument('--mt')
     parser.add_argument('--cf')
     args = parser.parse_args()
-    source_name = args.sn
+    collection_name = args.cn
     model_name = args.mn
     model_type = args.mt
     config_path = args.cf
@@ -42,7 +42,7 @@ if __name__ == '__main__':
     data_rep = DataRepository(uri=config.get('defaults', 'MONGO_URI'))
     X = []
     Y = []
-    for row in data_rep.get(source_name, { '$or': [{'Y': [1]}, {'Y': [0]}]}):
+    for row in data_rep.get(collection_name, { '$or': [{'Y': [1]}, {'Y': [0]}]}):
         root_logger.info(row['meta'])
 
         X.append(row['X'])

@@ -1,6 +1,7 @@
 var PredictionListModel = Backbone.Model.extend({
     defaults: function () {
         return {
+          title: null,
           modelName: null,
           dataSource: null,
           filter: null,

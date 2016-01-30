@@ -21,6 +21,12 @@ formatter = logging.Formatter('[%(asctime)s] [%(process)d:%(thread)d] \
 ch.setFormatter(formatter)
 root_logger.addHandler(ch)
 
+__source_type_map = {
+    'NHL': NHLReferenceRowParseStrategy(),
+    'NBA': NBAReferenceRowParseStrategy()
+}
+
+
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
@@ -46,7 +52,7 @@ if __name__ == '__main__':
                         team_stat_season=team_stat_season,
                         games_season=games_season,
                         game_type=source_type,
-                        row_parse_strategy=NBAReferenceRowParseStrategy(),
+                        row_parse_strategy=__source_type_map[source_type],
                         cache_team_stats=True)
     X, Y, metadata = ds.load(dict(date_from=date_from, date_to=date_to))
 

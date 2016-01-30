@@ -6,7 +6,9 @@ import argparse
 import ConfigParser
 sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 
-from data.source.nhlreference_source import SportReferenceDataSource
+from data.source.sport_reference_source import SportReferenceDataSource
+from data.source.sport_reference_source import NBAReferenceRowParseStrategy
+from data.source.sport_reference_source import NHLReferenceRowParseStrategy
 from utils import date_utils
 from data.storage.data_repository import DataRepository
 
@@ -20,12 +22,17 @@ formatter = logging.Formatter('[%(asctime)s] [%(process)d:%(thread)d] \
 ch.setFormatter(formatter)
 root_logger.addHandler(ch)
 
+__source_type_map = {
+    'NHL': NHLReferenceRowParseStrategy(),
+    'NBA': NBAReferenceRowParseStrategy()
+}
+
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--df')
     parser.add_argument('--dt')
-    parser.add_argument('--sn')
+    parser.add_argument('--cn')
     parser.add_argument('--cf')
     parser.add_argument('--st')
     parser.add_argument('--bu')
@@ -33,7 +40,7 @@ if __name__ == '__main__':
 
     date_from = date_utils.try_parse(args.df)
     date_to = date_utils.try_parse(args.dt)
-    source_name = args.sn
+    collection_name = args.cn
     config_path = args.cf
     source_type = args.st
     base_url = args.bu
@@ -61,6 +68,7 @@ if __name__ == '__main__':
                             team_stat_season=season[0],
                             games_season=season[1],
                             game_type=source_type,
+                            row_parse_strategy=__source_type_map[source_type],
                             cache_team_stats=True)
         X, Y, metadata = ds.load(dict(date_from=date_from, date_to=date_to))
 
@@ -76,4 +84,4 @@ if __name__ == '__main__':
             }
             data.append(doc)
 
-        data_rep.add(source_name, data)
+        data_rep.add(collection_name, data)

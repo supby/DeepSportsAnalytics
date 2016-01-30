@@ -63,9 +63,11 @@ class SportReferenceDataSource(DataSourceBase):
     def load(self, filter):
         """load nhl data"""
 
+        cache_key = '{0}_{1}'.format(self.__games_url, str(filter))
+
         data = None
         if self.__cache:
-            data = self.__cache.get(str(filter))
+            data = self.__cache.get(cache_key)
 
         if data == None:
             data = [],[],[]
@@ -82,7 +84,7 @@ class SportReferenceDataSource(DataSourceBase):
                 data = data[0]+d[0], data[1]+d[1], data[2] + d[2]
 
             if self.__cache:
-                self.__cache.set(str(filter), data)
+                self.__cache.set(cache_key, data)
 
         return data
 

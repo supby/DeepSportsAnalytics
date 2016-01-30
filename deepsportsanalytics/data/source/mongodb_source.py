@@ -19,10 +19,12 @@ class MongoDBDataSource(DataSourceBase):
     def load(self, filter):
         logger.info('load')
 
+        cache_key = '{0}_{1}'.format(self.__collection_name, str(filter))
+
         data = None
         if self.__cache:
             logger.info('trying to load from cache')
-            data = self.__cache.get(str(filter))
+            data = self.__cache.get(cache_key)
 
         if not data:
             logger.info('load from source')
@@ -30,7 +32,7 @@ class MongoDBDataSource(DataSourceBase):
             data = list(self.__data_repo.get(self.__collection_name, f))
 
             if self.__cache and data:
-                self.__cache.set(str(filter), data)
+                self.__cache.set(cache_key, data)
         else:
             logger.info('loaded from cache')
 

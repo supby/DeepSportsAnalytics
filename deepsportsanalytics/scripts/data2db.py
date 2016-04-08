@@ -27,6 +27,11 @@ __source_type_map = {
     'NBA': NBAReferenceRowParseStrategy()
 }
 
+__source_type_base_url_map = {
+    'NHL': 'http://www.hockey-reference.com',
+    'NBA': 'http://www.basketball-reference.com'
+}
+
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
@@ -35,7 +40,6 @@ if __name__ == '__main__':
     parser.add_argument('--cn')
     parser.add_argument('--cf')
     parser.add_argument('--st')
-    parser.add_argument('--bu')
     args = parser.parse_args()
 
     date_from = date_utils.try_parse(args.df)
@@ -43,7 +47,6 @@ if __name__ == '__main__':
     collection_name = args.cn
     config_path = args.cf
     source_type = args.st
-    base_url = args.bu
 
     config = ConfigParser.ConfigParser()
     config.read(config_path)
@@ -64,7 +67,7 @@ if __name__ == '__main__':
                                                 .format(season[0], season[1]))
 
         ds = SportReferenceDataSource(
-                            base_url=base_url,
+                            base_url=__source_type_base_url_map[source_type],
                             team_stat_season=season[0],
                             games_season=season[1],
                             game_type=source_type,

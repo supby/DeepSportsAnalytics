@@ -14,14 +14,16 @@ from source_base import DataSourceBase
 
 logger = logging.getLogger(__name__)
 
+
 class NHLReferenceRowParseStrategy(object):
 
     def get_row_data(self, tr_obj):
-        return parse(tr_obj('td:eq(0)').text().strip()),\
-            tr_obj('td:eq(1) a')[0],\
-            tr_obj('td:eq(3) a')[0],\
-            tr_obj('td:eq(2)').text().strip(),\
-            tr_obj('td:eq(4)').text().strip()
+        return parse(tr_obj('[data-stat="date_game"]').text().strip()),\
+            tr_obj('[data-stat="visitor_team_name"] a')[0],\
+            tr_obj('[data-stat="visitor_goals"]').text().strip(),\
+            tr_obj('[data-stat="home_team_name"] a')[0],\
+            tr_obj('[data-stat="home_goals"]').text().strip()
+
 
 class NBAReferenceRowParseStrategy(object):
 
@@ -42,8 +44,8 @@ class SportReferenceDataSource(DataSourceBase):
     __TEAM_STAT_URL_FORMAT = '/teams/{0}/{1}.html'
 
     def __init__(self, base_url, team_stat_season, games_season, game_type,
-                row_parse_strategy,
-                cache=None, fvector_len=None, cache_team_stats=False):
+                 row_parse_strategy,
+                 cache=None, fvector_len=None, cache_team_stats=False):
 
         self.__cache = cache
         self.__fvector_len = fvector_len
@@ -53,7 +55,8 @@ class SportReferenceDataSource(DataSourceBase):
         self.__team_stat_season = team_stat_season
         self.__games_season = games_season
 
-        self.__games_url = self.__GAMES_URL_FORMAT.format(game_type, games_season)
+        self.__games_url = self.__GAMES_URL_FORMAT.format(game_type,
+                                                          games_season)
 
         self.__row_parse_strategy = row_parse_strategy
 
@@ -69,17 +72,18 @@ class SportReferenceDataSource(DataSourceBase):
         if self.__cache:
             data = self.__cache.get(cache_key)
 
-        if data == None:
-            data = [],[],[]
+        if data is None:
+            data = [], [], []
             for table_selector in ['table#games tbody:eq(0) tr',
                                    'table#games_playoffs tbody:eq(0) tr']:
                 logger.info("Process table: %s" % table_selector)
 
                 d = self.__extract_data(
-                    table_rows=pq(url=self.__base_url+self.__games_url)(table_selector),
-                                base_url=self.__base_url,
-                                date_from=filter['date_from'],
-                                date_to=filter['date_to'])
+                    table_rows=pq(url=self.__base_url+self.__games_url)
+                                 (table_selector),
+                    base_url=self.__base_url,
+                    date_from=filter['date_from'],
+                    date_to=filter['date_to'])
 
                 data = data[0]+d[0], data[1]+d[1], data[2] + d[2]
 
@@ -100,7 +104,7 @@ class SportReferenceDataSource(DataSourceBase):
             d = pq(url=stats_url)
             tds = d('table#team_stats tbody:eq(0) tr:eq(0) td')
             for i in range(1, min(len(tds), self.__fvector_len)
-                                if self.__fvector_len > 0 else len(tds)):
+                           if self.__fvector_len > 0 else len(tds)):
                 val = float(0)
                 if tds[i].text:
                     val = float(tds[i].text)
@@ -120,11 +124,11 @@ class SportReferenceDataSource(DataSourceBase):
 
     def __proccess_team_stats(self, train_samples, team1Link, team2Link):
         team1url = self.__TEAM_STAT_URL_FORMAT\
-                        .format(self.__get_team_code(urlparse(team1Link).path),
-                                self.__team_stat_season)
+                       .format(self.__get_team_code(urlparse(team1Link).path),
+                               self.__team_stat_season)
         team2url = self.__TEAM_STAT_URL_FORMAT\
-                        .format(self.__get_team_code(urlparse(team2Link).path),
-                        self.__team_stat_season)
+                       .format(self.__get_team_code(urlparse(team2Link).path),
+                               self.__team_stat_season)
 
         team1Stats = self.__extract_stats(self.__base_url + team1url)
         team2Stats = self.__extract_stats(self.__base_url + team2url)
@@ -132,32 +136,35 @@ class SportReferenceDataSource(DataSourceBase):
         if team1Stats and team2Stats:
             train_samples.append(self.__get_diff(team1Stats, team2Stats))
 
-    def __extract_data(self, table_rows, base_url, date_from=None, date_to=None):
+    def __extract_data(self,
+                       table_rows,
+                       base_url,
+                       date_from=None,
+                       date_to=None):
         X = []
         Y = []
         metadata = []
 
         for tr in table_rows:
-            game_date, team1A, team2A, score1Str, score2Str\
-                                    = self.__row_parse_strategy.get_row_data(pq(tr))
+            game_date, team1A, score1Str, team2A, score2Str\
+                            = self.__row_parse_strategy.get_row_data(pq(tr))
 
-            if date_from != None and game_date < date_from:
+            if date_from is not None and game_date < date_from:
                 continue
-            if date_to != None and game_date >= date_to:
+            if date_to is not None and game_date >= date_to:
                 break
+            if not score1Str and not score2Str:
+                continue
 
             logger.info('%s: %s - %s' % (game_date, team1A.text, team2A.text))
 
             metadata.append(dict(game_date=game_date,
-                                team1_name=team1A.text,
-                                team2_name=team2A.text))
+                                 team1_name=team1A.text,
+                                 team2_name=team2A.text))
             self.__proccess_team_stats(X,
                                        base_url + team1A.attrib['href'],
                                        base_url + team2A.attrib['href'])
 
-            if score1Str and score2Str:
-                Y.append(1) if int(score1Str) - int(score2Str) >= 0 else Y.append(0)
-            else:
-                Y.append(None)
+            Y.append(1 if int(score1Str) - int(score2Str) >= 0 else 0)
 
         return X, Y, metadata

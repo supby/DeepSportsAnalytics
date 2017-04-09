@@ -4,6 +4,7 @@ import logging
 import logging.config
 import argparse
 import ConfigParser
+import csv
 
 sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 

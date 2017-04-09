@@ -4,13 +4,14 @@ import logging
 import logging.config
 import argparse
 import ConfigParser
-sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 
 from data.source.sport_reference_source import SportReferenceDataSource
 from data.source.sport_reference_source import NBAReferenceRowParseStrategy
 from data.source.sport_reference_source import NHLReferenceRowParseStrategy
 from utils import date_utils
 from data.storage.data_repository import DataRepository
+
+sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 
 root_logger = logging.getLogger()
 root_logger.setLevel(logging.INFO)
@@ -64,7 +65,7 @@ if __name__ == '__main__':
 
     for season in seasons:
         root_logger.info('stat_season: {0}, games_season: {1}'
-                                                .format(season[0], season[1]))
+                         .format(season[0], season[1]))
 
         ds = SportReferenceDataSource(
                             base_url=__source_type_base_url_map[source_type],
@@ -75,7 +76,6 @@ if __name__ == '__main__':
                             cache_team_stats=True)
         X, Y, metadata = ds.load(dict(date_from=date_from, date_to=date_to))
 
-
         data = []
         meta_keys = metadata[0].keys()
         for i in range(len(Y)):
@@ -83,7 +83,8 @@ if __name__ == '__main__':
             doc = {
                 'X': X[i],
                 'Y': [Y[i]],
-                'meta': { meta_keys[j]:meta_data_row[j] for j in range(len(meta_keys)) }
+                'meta': {meta_keys[j]: meta_data_row[j]
+                         for j in range(len(meta_keys))}
             }
             data.append(doc)
 

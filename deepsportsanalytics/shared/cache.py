@@ -4,6 +4,7 @@ import logging
 import threading
 logger = logging.getLogger(__name__)
 
+
 class DefaultCache(object):
 
     __instance = None

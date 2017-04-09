@@ -6,6 +6,7 @@ from statmodel.model_base import ModelBase
 
 logger = logging.getLogger(__name__)
 
+
 class ScikitModel(ModelBase):
 
     def __init__(self, model, scaler=None):

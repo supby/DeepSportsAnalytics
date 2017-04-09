@@ -2,6 +2,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+
 class PredictionService(object):
 
     def __init__(self, model_storage):

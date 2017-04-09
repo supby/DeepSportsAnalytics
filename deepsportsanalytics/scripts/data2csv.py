@@ -4,12 +4,13 @@ import logging
 import logging.config
 import argparse
 import csv
-sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 
 from data.source.sport_reference_source import SportReferenceDataSource
 from data.source.sport_reference_source import NBAReferenceRowParseStrategy
 from data.source.sport_reference_source import NHLReferenceRowParseStrategy
 from utils import date_utils
+
+sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 
 root_logger = logging.getLogger()
 root_logger.setLevel(logging.INFO)
@@ -58,6 +59,9 @@ if __name__ == '__main__':
 
     with open(csv_filename, 'wb') as csvfile:
         datawriter = csv.writer(csvfile)
-        datawriter.writerow(metadata[0].keys()+['x{0}'.format(i) for i in range(len(X[0]))]+['y'])
+        datawriter.writerow(metadata[0].keys() +
+                            ['x{0}'.format(i)
+                             for i in range(len(X[0]))]+['y'])
         for i in range(len(Y)):
-            datawriter.writerow([metadata[i][k] for k in metadata[i].keys()]+X[i]+[Y[i]])
+            datawriter.writerow([metadata[i][k]
+                                 for k in metadata[i].keys()]+X[i]+[Y[i]])

@@ -1,6 +1,7 @@
 import os
 import logging
 
+
 class BaseConfig(object):
     DEBUG = False
     TESTING = False
@@ -11,18 +12,22 @@ class BaseConfig(object):
     LOGGING_LOCATION = '/tmp/deepsportsanalytics.log'
     LOGGING_LEVEL = logging.INFO
 
+
 class DevelopmentConfig(BaseConfig):
     DEBUG = True
     LOGGING_LEVEL = logging.DEBUG
 
+
 class TestConfig(BaseConfig):
     TESTING = True
+
 
 class ProductionConfig(BaseConfig):
     MONGO_URI = os.environ.get('MONGOLAB_URI', None)
     REDIS_URL = os.environ.get('REDIS_URL', None)
     AZURE_STORAGE_NAME = os.environ.get('AZURE_STORAGE_NAME', None)
     AZURE_STORAGE_KEY = os.environ.get('AZURE_STORAGE_KEY', None)
+
 
 __DEF_CONFIG = "deepsportsanalytics.webapp.config.DevelopmentConfig"
 __config = {
@@ -31,6 +36,7 @@ __config = {
     "testing": "deepsportsanalytics.webapp.config.TestingConfig",
     "default": __DEF_CONFIG
 }
+
 
 def configure_app(app, env):
     app.config.from_object(__config.get(env, __DEF_CONFIG))

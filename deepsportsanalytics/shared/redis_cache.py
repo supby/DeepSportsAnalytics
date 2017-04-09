@@ -8,6 +8,7 @@ import redis
 
 logger = logging.getLogger(__name__)
 
+
 class RedisCache(object):
 
     def __init__(self, url):

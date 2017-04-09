@@ -1,7 +1,9 @@
 import threading
 
+
 class TimeoutError(RuntimeError):
     pass
+
 
 class AsyncCall(object):
     def __init__(self, fnc, callback=None):
@@ -10,8 +12,9 @@ class AsyncCall(object):
 
     def __call__(self, * args, ** kwargs):
         self.Thread = threading.Thread(target=self.run,
-                                        name=self.Callable.__name__, args=args,
-                                        kwargs=kwargs)
+                                       name=self.Callable.__name__,
+                                       args=args,
+                                       kwargs=kwargs)
         self.Thread.start()
         return self
 
@@ -27,6 +30,7 @@ class AsyncCall(object):
         if self.Callback:
             self.Callback(self.Result)
 
+
 class AsyncMethod(object):
     def __init__(self, fnc, callback=None):
         self.Callable = fnc
@@ -35,8 +39,9 @@ class AsyncMethod(object):
     def __call__(self, * args, ** kwargs):
         return AsyncCall(self.Callable, self.Callback)(*args, ** kwargs)
 
+
 def Async(fnc=None, callback=None):
-    if fnc == None:
+    if fnc is None:
         def AddAsyncCallback(fnc):
             return AsyncMethod(fnc, callback)
         return AddAsyncCallback

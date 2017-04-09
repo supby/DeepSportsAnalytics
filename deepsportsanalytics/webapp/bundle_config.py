@@ -18,8 +18,8 @@ def configure_bundle(app):
             'css/libs/*.css',
             'css/*.css',
             Bundle('main.scss',
-                    filters='scss',
-                    depends='**/*.scss'),
+                   filters='scss',
+                   depends='**/*.scss'),
             filters='cssmin',
             output='gen/all.css')
     }

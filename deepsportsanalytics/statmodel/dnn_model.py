@@ -10,6 +10,7 @@ logger = logging.getLogger(__name__)
 _BATCH_SIZE = 43
 MAX_EPOCHS_UNSUPERVISED = 30
 
+
 class DNNModel(ModelBase):
 
     def train(self, X, Y):
@@ -18,14 +19,14 @@ class DNNModel(ModelBase):
         ds_valid, ds_test = ds_valid.split(0.7)
 
         Train(dataset=ds_train,
-            model=mlp.MLP(
+              model=mlp.MLP(
                 batch_size=_BATCH_SIZE,
                 layers=[
                         mlp.PretrainedLayer(layer_name='h1',
                                             layer_content=pickle.load(open("./dae_l1.pkl", 'rb'))),
                         mlp.PretrainedLayer(layer_name='h2',
                                             layer_content=pickle.load(open("./dae_l2.pkl", 'rb'))),
-                       mlp.Sigmoid(layer_name='h4', dim=200, irange=.005, init_bias=0.),
+                        mlp.Sigmoid(layer_name='h4', dim=200, irange=.005, init_bias=0.),
                         mlp.Softmax(
                             max_col_norm=1.9365,
                             layer_name='y',
@@ -33,9 +34,8 @@ class DNNModel(ModelBase):
                             irange=.005
                         )
                     ],
-                nvis=ds_train.nr_inputs
-            ),
-            algorithm=SGD(
+                nvis=ds_train.nr_inputs),
+              algorithm=SGD(
                 learning_rate=.05,
                 learning_rule=learning_rule.Momentum(init_momentum=.5),
                 monitoring_dataset=self.__ds_valid,
@@ -47,19 +47,15 @@ class DNNModel(ModelBase):
                 ),
                 update_callbacks=sgd.ExponentialDecay(
                     decay_factor=1.00004,
-                    min_lr=.000001
-                )
-            ),
-            extensions=[
+                    min_lr=.000001)),
+              extensions=[
                 learning_rule.MomentumAdjustor(
                     start=1,
                     saturate=50,
                     final_momentum=.7
                 ),
                 best_params.MonitorBasedSaveBest('y_misclass',
-                                                 '../pyl2_dae_best.pkl')
-            ]
-        ).main_loop()
+                                                 '../pyl2_dae_best.pkl')]).main_loop()
 
     def predict(self, X):
         #return self.__classify_ann();

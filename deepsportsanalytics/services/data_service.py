@@ -2,6 +2,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+
 class DataService(object):
 
     def __init__(self, data_source_factory):
@@ -13,7 +14,7 @@ class DataService(object):
         data_source = self.__data_source_factory.create(data_source_type)
         X = []
         Y = []
-        meta = []        
+        meta = []
         for row in data_source.load(filter=filter):
             X.append(row['X'])
             Y.append(row['Y'])

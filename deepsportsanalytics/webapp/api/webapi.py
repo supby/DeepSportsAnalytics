@@ -23,7 +23,10 @@ logger = logging.getLogger(__name__)
 
 webapi = Blueprint('webapi', __name__)
 
-@webapi.route('/api/v1.0/predict/<modelname>/<datasourcetype>/<datefrom>/<dateto>', methods=['GET'])
+
+@webapi.route(
+    '/api/v1.0/predict/<modelname>/<datasourcetype>/<datefrom>/<dateto>',
+    methods=['GET'])
 def predict(modelname, datasourcetype, datefrom, dateto):
     date_from = date_utils.try_parse(datefrom)
     date_to = date_utils.try_parse(dateto)
@@ -52,10 +55,10 @@ def predict(modelname, datasourcetype, datefrom, dateto):
         predictions = ps.predict(X=X, model_name=modelname)
 
         return jsonify(data=[{'gameDate': str(pd[1]['game_date'].date()),
-                   'team1Name': pd[1]['team1_name'],
-                   'team2Name': pd[1]['team2_name'],
-                   'winProba': pd[0][1] * 100}
-                   for pd in zip(predictions, metadata)])
-    except:
+                              'team1Name': pd[1]['team1_name'],
+                              'team2Name': pd[1]['team2_name'],
+                              'winProba': pd[0][1] * 100}
+                       for pd in zip(predictions, metadata)])
+    except ex:
         logger.error("%s: Unexpected error: %s" % (__name__, sys.exc_info()))
         raise InternalServerError

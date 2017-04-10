@@ -12,7 +12,6 @@ from data.source.sport_reference_source import SportReferenceDataSource
 from data.source.sport_reference_source import NBAReferenceRowParseStrategy
 from data.source.sport_reference_source import NHLReferenceRowParseStrategy
 from utils import date_utils
-from data.storage.data_repository import DataRepository
 
 
 root_logger = logging.getLogger()
@@ -51,9 +50,9 @@ if __name__ == '__main__':
 
     # (stat_season, games_season)
     seasons = [
-        (2009, 2010),
-        (2010, 2011),
-        (2011, 2012),
+        #(2009, 2010),
+        #(2010, 2011),
+        #(2011, 2012),
         (2012, 2013),
         (2013, 2014),
         (2014, 2015),

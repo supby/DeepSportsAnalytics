@@ -59,24 +59,29 @@ if __name__ == '__main__':
         (2015, 2016),
         ]
 
-    for season in seasons:
-        root_logger.info('stat_season: {0}, games_season: {1}'
-                         .format(season[0], season[1]))
+    with open(csv_filename, 'wb') as csvfile:
+        datawriter = csv.writer(csvfile)
 
-        ds = SportReferenceDataSource(
+        isFirstRow = True
+
+        for season in seasons:
+            root_logger.info('stat_season: {0}, games_season: {1}'
+                             .format(season[0], season[1]))
+
+            ds = SportReferenceDataSource(
                             base_url=__source_type_base_url_map[source_type],
                             team_stat_season=season[0],
                             games_season=season[1],
                             game_type=source_type,
                             row_parse_strategy=__source_type_map[source_type],
                             cache_team_stats=True)
-        X, Y, metadata = ds.load(dict(date_from=date_from, date_to=date_to))
+            X, Y, metadata = ds.load(
+                dict(date_from=date_from, date_to=date_to))
 
-        with open(csv_filename, 'wb') as csvfile:
-            datawriter = csv.writer(csvfile)
-            datawriter.writerow(metadata[0].keys() +
-                                ['x{0}'.format(i)
-                                 for i in range(len(X[0]))]+['y'])
+            if isFirstRow:
+                datawriter.writerow(metadata[0].keys() +
+                                    ['x{0}'.format(i)
+                                     for i in range(len(X[0]))]+['y'])
             for i in range(len(Y)):
                 datawriter.writerow([metadata[i][k]
                                      for k in metadata[i].keys()]+X[i]+[Y[i]])

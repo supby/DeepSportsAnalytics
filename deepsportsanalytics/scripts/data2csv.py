@@ -82,6 +82,8 @@ if __name__ == '__main__':
                 datawriter.writerow(metadata[0].keys() +
                                     ['x{0}'.format(i)
                                      for i in range(len(X[0]))]+['y'])
+                isFirstRow = False
+                
             for i in range(len(Y)):
                 datawriter.writerow([metadata[i][k]
                                      for k in metadata[i].keys()]+X[i]+[Y[i]])
